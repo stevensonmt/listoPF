@@ -5856,7 +5856,7 @@ var author$project$Main$update = F2(
 							tasks: completed
 						}),
 					elm$core$Platform$Cmd$none);
-			default:
+			case 'ClearDeleted':
 				var deleted = A2(
 					elm$core$Dict$filter,
 					F2(
@@ -5873,6 +5873,12 @@ var author$project$Main$update = F2(
 							showModal: false,
 							tasks: deleted
 						}),
+					elm$core$Platform$Cmd$none);
+			default:
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{currentToDoID: elm$core$Maybe$Nothing, showModal: false}),
 					elm$core$Platform$Cmd$none);
 		}
 	});
@@ -5893,6 +5899,7 @@ var author$project$Colors$primary = function (alpha) {
 var author$project$Colors$secondary = function (alpha) {
 	return A4(mdgriffith$elm_ui$Element$rgba255, 229, 205, 180, alpha);
 };
+var author$project$Main$CloseModal = {$: 'CloseModal'};
 var author$project$Main$CompleteToDo = function (a) {
 	return {$: 'CompleteToDo', a: a};
 };
@@ -11381,6 +11388,31 @@ var mdgriffith$elm_ui$Element$Border$rounded = function (radius) {
 			'border-radius',
 			elm$core$String$fromInt(radius) + 'px'));
 };
+var elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			elm$virtual_dom$VirtualDom$on,
+			event,
+			elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		elm$html$Html$Events$on,
+		'click',
+		elm$json$Json$Decode$succeed(msg));
+};
+var mdgriffith$elm_ui$Element$Events$onClick = A2(elm$core$Basics$composeL, mdgriffith$elm_ui$Internal$Model$Attr, elm$html$Html$Events$onClick);
+var elm$html$Html$Events$onMouseLeave = function (msg) {
+	return A2(
+		elm$html$Html$Events$on,
+		'mouseleave',
+		elm$json$Json$Decode$succeed(msg));
+};
+var mdgriffith$elm_ui$Element$Events$onMouseLeave = A2(elm$core$Basics$composeL, mdgriffith$elm_ui$Internal$Model$Attr, elm$html$Html$Events$onMouseLeave);
 var mdgriffith$elm_ui$Internal$Flag$fontSize = mdgriffith$elm_ui$Internal$Flag$flag(4);
 var mdgriffith$elm_ui$Internal$Model$FontSize = function (a) {
 	return {$: 'FontSize', a: a};
@@ -11408,24 +11440,6 @@ var elm$html$Html$Attributes$tabindex = function (n) {
 };
 var mdgriffith$elm_ui$Internal$Flag$cursor = mdgriffith$elm_ui$Internal$Flag$flag(21);
 var mdgriffith$elm_ui$Element$pointer = A2(mdgriffith$elm_ui$Internal$Model$Class, mdgriffith$elm_ui$Internal$Flag$cursor, mdgriffith$elm_ui$Internal$Style$classes.cursorPointer);
-var elm$virtual_dom$VirtualDom$Normal = function (a) {
-	return {$: 'Normal', a: a};
-};
-var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
-var elm$html$Html$Events$on = F2(
-	function (event, decoder) {
-		return A2(
-			elm$virtual_dom$VirtualDom$on,
-			event,
-			elm$virtual_dom$VirtualDom$Normal(decoder));
-	});
-var elm$html$Html$Events$onClick = function (msg) {
-	return A2(
-		elm$html$Html$Events$on,
-		'click',
-		elm$json$Json$Decode$succeed(msg));
-};
-var mdgriffith$elm_ui$Element$Events$onClick = A2(elm$core$Basics$composeL, mdgriffith$elm_ui$Internal$Model$Attr, elm$html$Html$Events$onClick);
 var mdgriffith$elm_ui$Element$Input$hasFocusStyle = function (attr) {
 	if (((attr.$ === 'StyleClass') && (attr.b.$ === 'PseudoSelector')) && (attr.b.a.$ === 'Focus')) {
 		var _n1 = attr.b;
@@ -11543,7 +11557,8 @@ var author$project$Main$actionsModal = function (model) {
 					mdgriffith$elm_ui$Element$Border$rounded(22),
 					mdgriffith$elm_ui$Element$padding(10),
 					mdgriffith$elm_ui$Element$spacing(4),
-					mdgriffith$elm_ui$Element$width(mdgriffith$elm_ui$Element$fill),
+					mdgriffith$elm_ui$Element$width(
+					mdgriffith$elm_ui$Element$px(400)),
 					mdgriffith$elm_ui$Element$height(mdgriffith$elm_ui$Element$fill)
 				]),
 			_List_fromArray(
@@ -11552,6 +11567,8 @@ var author$project$Main$actionsModal = function (model) {
 					mdgriffith$elm_ui$Element$column,
 					_List_fromArray(
 						[
+							mdgriffith$elm_ui$Element$Events$onClick(author$project$Main$CloseModal),
+							mdgriffith$elm_ui$Element$Events$onMouseLeave(author$project$Main$CloseModal),
 							mdgriffith$elm_ui$Element$centerX,
 							mdgriffith$elm_ui$Element$centerY,
 							mdgriffith$elm_ui$Element$width(
