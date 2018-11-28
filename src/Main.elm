@@ -280,21 +280,37 @@ listTasksView model =
         ((List.map
             (\( id, task ) ->
                 Input.button
-                    [ width (px 120)
-                    , height (px 36)
-                    , Font.size 14
-                    , padding 10
-                    , mouseOver [ Background.color (Colors.primary 0.6) ]
-                    , Element.onLeft
-                        (if Just id == model.currentToDoID then
-                            (launchItemMenu model)
-                         else
-                            Element.none
+                    (if Just id == model.currentToDoID then
+                        (List.append [ Element.onLeft (launchItemMenu model) ]
+                            (listItemStyle Active)
                         )
-                    ]
-                    { onPress = Just (LaunchItemMenu id)
-                    , label = Element.text (task.name)
-                    }
+                     else if task.deleted then
+                        listItemStyle Deleted
+                     else if task.completed then
+                        listItemStyle Completed
+                     else
+                        []
+                    )
+                    (let
+                        leader =
+                            String.fromChar
+                                (if task.completed then
+                                    '✓'
+                                 else if task.deleted then
+                                    '✘'
+                                 else
+                                    '☉'
+                                )
+                     in
+                        { onPress =
+                            (if Just id /= model.currentToDoID then
+                                Just (LaunchItemMenu id)
+                             else
+                                Nothing
+                            )
+                        , label = Element.text (leader ++ " " ++ task.name)
+                        }
+                    )
             )
             (Dict.toList model.tasks)
          )
@@ -310,7 +326,7 @@ listTasksView model =
 --(List.map
 --(\( id, task ) ->
 --Input.option id
---(Element.el
+{--(Element.el--}
 --(if Just id == model.currentToDoID then
 --(List.append [ Element.onLeft (launchItemMenu model) ]
 --(listItemStyle Active)
@@ -338,7 +354,7 @@ listTasksView model =
 --(leader ++ " " ++ task.name)
 --)
 --)
---)
+{--)--}
 --)
 --(Dict.toList model.tasks)
 --)
@@ -358,7 +374,7 @@ listDeletedTasksView model =
             )
             (List.filter (\( id, task ) -> task.deleted) (Dict.toList model.tasks))
          )
-            ++ [ buttonsRow model ]
+         --++ [ buttonsRow model ]
         )
 
 
@@ -371,7 +387,7 @@ listCompletedTasksView model =
             )
             (List.filter (\( id, task ) -> task.completed) (Dict.toList model.tasks))
          )
-            ++ [ buttonsRow model ]
+         --++ [ buttonsRow model ]
         )
 
 
@@ -384,7 +400,7 @@ listActiveTasksView model =
             )
             (Dict.toList (Dict.filter (\id task -> not (task.completed || task.deleted)) (model.tasks)))
          )
-            ++ [ buttonsRow model ]
+         --++ [ buttonsRow model ]
         )
 
 

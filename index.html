@@ -13465,411 +13465,6 @@ var author$project$Main$launchMainMenu = function (model) {
 var author$project$Main$LaunchItemMenu = function (a) {
 	return {$: 'LaunchItemMenu', a: a};
 };
-var mdgriffith$elm_ui$Element$fillPortion = mdgriffith$elm_ui$Internal$Model$Fill;
-var author$project$Main$addTaskButton = A2(
-	mdgriffith$elm_ui$Element$Input$button,
-	_List_fromArray(
-		[
-			mdgriffith$elm_ui$Element$centerX,
-			mdgriffith$elm_ui$Element$width(
-			mdgriffith$elm_ui$Element$fillPortion(1)),
-			mdgriffith$elm_ui$Element$height(
-			mdgriffith$elm_ui$Element$px(36)),
-			mdgriffith$elm_ui$Element$Background$color(
-			author$project$Colors$primary(1.0)),
-			mdgriffith$elm_ui$Element$Font$size(14),
-			mdgriffith$elm_ui$Element$padding(12),
-			mdgriffith$elm_ui$Element$Font$color(
-			author$project$Colors$secondary(0.8)),
-			mdgriffith$elm_ui$Element$Font$bold
-		]),
-	{
-		label: mdgriffith$elm_ui$Element$text('Add a new task'),
-		onPress: elm$core$Maybe$Just(author$project$Main$AddNewToDo)
-	});
-var mdgriffith$elm_ui$Internal$Model$AlignY = function (a) {
-	return {$: 'AlignY', a: a};
-};
-var mdgriffith$elm_ui$Internal$Model$CenterY = {$: 'CenterY'};
-var mdgriffith$elm_ui$Element$centerY = mdgriffith$elm_ui$Internal$Model$AlignY(mdgriffith$elm_ui$Internal$Model$CenterY);
-var author$project$Main$clearAllButton = A2(
-	mdgriffith$elm_ui$Element$Input$button,
-	_List_fromArray(
-		[
-			mdgriffith$elm_ui$Element$width(
-			mdgriffith$elm_ui$Element$fillPortion(1)),
-			mdgriffith$elm_ui$Element$height(
-			mdgriffith$elm_ui$Element$px(36)),
-			mdgriffith$elm_ui$Element$Background$color(
-			author$project$Colors$primary(1.0)),
-			mdgriffith$elm_ui$Element$Font$size(14),
-			A2(mdgriffith$elm_ui$Element$paddingXY, 18, 8),
-			mdgriffith$elm_ui$Element$centerY,
-			mdgriffith$elm_ui$Element$Font$color(
-			author$project$Colors$secondary(0.8)),
-			mdgriffith$elm_ui$Element$Font$bold
-		]),
-	{
-		label: mdgriffith$elm_ui$Element$text('Clear All'),
-		onPress: elm$core$Maybe$Just(author$project$Main$ClearAll)
-	});
-var author$project$Main$clearCompleteButton = A2(
-	mdgriffith$elm_ui$Element$Input$button,
-	_List_fromArray(
-		[
-			mdgriffith$elm_ui$Element$width(
-			mdgriffith$elm_ui$Element$fillPortion(1)),
-			mdgriffith$elm_ui$Element$height(
-			mdgriffith$elm_ui$Element$px(36)),
-			mdgriffith$elm_ui$Element$Background$color(
-			author$project$Colors$primary(1.0)),
-			mdgriffith$elm_ui$Element$Font$size(14),
-			A2(mdgriffith$elm_ui$Element$paddingXY, 18, 8),
-			mdgriffith$elm_ui$Element$centerY,
-			mdgriffith$elm_ui$Element$Font$color(
-			author$project$Colors$secondary(0.8)),
-			mdgriffith$elm_ui$Element$Font$bold
-		]),
-	{
-		label: mdgriffith$elm_ui$Element$text('Clear Complete'),
-		onPress: elm$core$Maybe$Just(author$project$Main$ClearComplete)
-	});
-var author$project$Main$clearDeletedButton = A2(
-	mdgriffith$elm_ui$Element$Input$button,
-	_List_fromArray(
-		[
-			mdgriffith$elm_ui$Element$width(
-			mdgriffith$elm_ui$Element$fillPortion(1)),
-			mdgriffith$elm_ui$Element$height(
-			mdgriffith$elm_ui$Element$px(36)),
-			mdgriffith$elm_ui$Element$Background$color(
-			author$project$Colors$primary(1.0)),
-			mdgriffith$elm_ui$Element$Font$size(14),
-			A2(mdgriffith$elm_ui$Element$paddingXY, 18, 8),
-			mdgriffith$elm_ui$Element$centerY,
-			mdgriffith$elm_ui$Element$Font$color(
-			author$project$Colors$secondary(0.8)),
-			mdgriffith$elm_ui$Element$Font$bold
-		]),
-	{
-		label: mdgriffith$elm_ui$Element$text('Clear Deleted'),
-		onPress: elm$core$Maybe$Just(author$project$Main$ClearDeleted)
-	});
-var author$project$Main$ListActive = {$: 'ListActive'};
-var author$project$Main$listActiveButton = A2(
-	mdgriffith$elm_ui$Element$Input$button,
-	_List_fromArray(
-		[
-			mdgriffith$elm_ui$Element$width(
-			mdgriffith$elm_ui$Element$fillPortion(1)),
-			mdgriffith$elm_ui$Element$height(
-			mdgriffith$elm_ui$Element$px(36)),
-			mdgriffith$elm_ui$Element$Background$color(
-			author$project$Colors$primary(1.0)),
-			mdgriffith$elm_ui$Element$Font$size(14),
-			A2(mdgriffith$elm_ui$Element$paddingXY, 18, 8),
-			mdgriffith$elm_ui$Element$centerY,
-			mdgriffith$elm_ui$Element$Font$color(
-			author$project$Colors$secondary(0.8)),
-			mdgriffith$elm_ui$Element$Font$bold
-		]),
-	{
-		label: mdgriffith$elm_ui$Element$text('Show Active'),
-		onPress: elm$core$Maybe$Just(author$project$Main$ListActive)
-	});
-var author$project$Main$listCompletedButton = A2(
-	mdgriffith$elm_ui$Element$Input$button,
-	_List_fromArray(
-		[
-			mdgriffith$elm_ui$Element$width(
-			mdgriffith$elm_ui$Element$fillPortion(1)),
-			mdgriffith$elm_ui$Element$height(
-			mdgriffith$elm_ui$Element$px(36)),
-			mdgriffith$elm_ui$Element$Background$color(
-			author$project$Colors$primary(1.0)),
-			mdgriffith$elm_ui$Element$Font$size(14),
-			A2(mdgriffith$elm_ui$Element$paddingXY, 18, 8),
-			mdgriffith$elm_ui$Element$centerY,
-			mdgriffith$elm_ui$Element$Font$color(
-			author$project$Colors$secondary(0.8)),
-			mdgriffith$elm_ui$Element$Font$bold
-		]),
-	{
-		label: mdgriffith$elm_ui$Element$text('Show Completed'),
-		onPress: elm$core$Maybe$Just(author$project$Main$ListCompleted)
-	});
-var author$project$Main$listDeletedButton = A2(
-	mdgriffith$elm_ui$Element$Input$button,
-	_List_fromArray(
-		[
-			mdgriffith$elm_ui$Element$width(
-			mdgriffith$elm_ui$Element$fillPortion(1)),
-			mdgriffith$elm_ui$Element$height(
-			mdgriffith$elm_ui$Element$px(36)),
-			mdgriffith$elm_ui$Element$Background$color(
-			author$project$Colors$primary(1.0)),
-			mdgriffith$elm_ui$Element$Font$size(14),
-			A2(mdgriffith$elm_ui$Element$paddingXY, 18, 8),
-			mdgriffith$elm_ui$Element$centerY,
-			mdgriffith$elm_ui$Element$Font$color(
-			author$project$Colors$secondary(0.8)),
-			mdgriffith$elm_ui$Element$Font$bold
-		]),
-	{
-		label: mdgriffith$elm_ui$Element$text('Show Deleted'),
-		onPress: elm$core$Maybe$Just(author$project$Main$ListDeleted)
-	});
-var author$project$Main$rollbackButton = A2(
-	mdgriffith$elm_ui$Element$Input$button,
-	_List_fromArray(
-		[
-			mdgriffith$elm_ui$Element$width(
-			mdgriffith$elm_ui$Element$fillPortion(1)),
-			mdgriffith$elm_ui$Element$height(
-			mdgriffith$elm_ui$Element$px(36)),
-			mdgriffith$elm_ui$Element$Background$color(
-			author$project$Colors$primary(1.0)),
-			mdgriffith$elm_ui$Element$Font$size(14),
-			mdgriffith$elm_ui$Element$padding(6),
-			mdgriffith$elm_ui$Element$centerY,
-			mdgriffith$elm_ui$Element$Font$color(
-			author$project$Colors$secondary(0.8)),
-			mdgriffith$elm_ui$Element$Font$bold
-		]),
-	{
-		label: mdgriffith$elm_ui$Element$text('Undo last change'),
-		onPress: elm$core$Maybe$Just(author$project$Main$Rollback)
-	});
-var elm$core$Dict$values = function (dict) {
-	return A3(
-		elm$core$Dict$foldr,
-		F3(
-			function (key, value, valueList) {
-				return A2(elm$core$List$cons, value, valueList);
-			}),
-		_List_Nil,
-		dict);
-};
-var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
-var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
-var mdgriffith$elm_ui$Internal$Model$Padding = F5(
-	function (a, b, c, d, e) {
-		return {$: 'Padding', a: a, b: b, c: c, d: d, e: e};
-	});
-var mdgriffith$elm_ui$Internal$Model$Spaced = F3(
-	function (a, b, c) {
-		return {$: 'Spaced', a: a, b: b, c: c};
-	});
-var mdgriffith$elm_ui$Internal$Model$extractSpacingAndPadding = function (attrs) {
-	return A3(
-		elm$core$List$foldr,
-		F2(
-			function (attr, _n0) {
-				var pad = _n0.a;
-				var spacing = _n0.b;
-				return _Utils_Tuple2(
-					function () {
-						if (pad.$ === 'Just') {
-							var x = pad.a;
-							return pad;
-						} else {
-							if ((attr.$ === 'StyleClass') && (attr.b.$ === 'PaddingStyle')) {
-								var _n3 = attr.b;
-								var name = _n3.a;
-								var t = _n3.b;
-								var r = _n3.c;
-								var b = _n3.d;
-								var l = _n3.e;
-								return elm$core$Maybe$Just(
-									A5(mdgriffith$elm_ui$Internal$Model$Padding, name, t, r, b, l));
-							} else {
-								return elm$core$Maybe$Nothing;
-							}
-						}
-					}(),
-					function () {
-						if (spacing.$ === 'Just') {
-							var x = spacing.a;
-							return spacing;
-						} else {
-							if ((attr.$ === 'StyleClass') && (attr.b.$ === 'SpacingStyle')) {
-								var _n6 = attr.b;
-								var name = _n6.a;
-								var x = _n6.b;
-								var y = _n6.c;
-								return elm$core$Maybe$Just(
-									A3(mdgriffith$elm_ui$Internal$Model$Spaced, name, x, y));
-							} else {
-								return elm$core$Maybe$Nothing;
-							}
-						}
-					}());
-			}),
-		_Utils_Tuple2(elm$core$Maybe$Nothing, elm$core$Maybe$Nothing),
-		attrs);
-};
-var mdgriffith$elm_ui$Element$wrappedRow = F2(
-	function (attrs, children) {
-		var _n0 = mdgriffith$elm_ui$Internal$Model$extractSpacingAndPadding(attrs);
-		var padded = _n0.a;
-		var spaced = _n0.b;
-		if (spaced.$ === 'Nothing') {
-			return A4(
-				mdgriffith$elm_ui$Internal$Model$element,
-				mdgriffith$elm_ui$Internal$Model$asRow,
-				mdgriffith$elm_ui$Internal$Model$div,
-				A2(
-					elm$core$List$cons,
-					mdgriffith$elm_ui$Internal$Model$htmlClass(mdgriffith$elm_ui$Internal$Style$classes.contentLeft + (' ' + (mdgriffith$elm_ui$Internal$Style$classes.contentCenterY + (' ' + mdgriffith$elm_ui$Internal$Style$classes.wrapped)))),
-					A2(
-						elm$core$List$cons,
-						mdgriffith$elm_ui$Element$width(mdgriffith$elm_ui$Element$shrink),
-						A2(
-							elm$core$List$cons,
-							mdgriffith$elm_ui$Element$height(mdgriffith$elm_ui$Element$shrink),
-							attrs))),
-				mdgriffith$elm_ui$Internal$Model$Unkeyed(children));
-		} else {
-			var _n2 = spaced.a;
-			var spaceName = _n2.a;
-			var x = _n2.b;
-			var y = _n2.c;
-			var newPadding = function () {
-				if (padded.$ === 'Just') {
-					var _n5 = padded.a;
-					var name = _n5.a;
-					var t = _n5.b;
-					var r = _n5.c;
-					var b = _n5.d;
-					var l = _n5.e;
-					return ((_Utils_cmp(r, (x / 2) | 0) > -1) && (_Utils_cmp(b, (y / 2) | 0) > -1)) ? elm$core$Maybe$Just(
-						mdgriffith$elm_ui$Element$paddingEach(
-							{bottom: b - ((y / 2) | 0), left: l - ((x / 2) | 0), right: r - ((x / 2) | 0), top: t - ((y / 2) | 0)})) : elm$core$Maybe$Nothing;
-				} else {
-					return elm$core$Maybe$Nothing;
-				}
-			}();
-			if (newPadding.$ === 'Just') {
-				var pad = newPadding.a;
-				return A4(
-					mdgriffith$elm_ui$Internal$Model$element,
-					mdgriffith$elm_ui$Internal$Model$asRow,
-					mdgriffith$elm_ui$Internal$Model$div,
-					A2(
-						elm$core$List$cons,
-						mdgriffith$elm_ui$Internal$Model$htmlClass(mdgriffith$elm_ui$Internal$Style$classes.contentLeft + (' ' + (mdgriffith$elm_ui$Internal$Style$classes.contentCenterY + (' ' + mdgriffith$elm_ui$Internal$Style$classes.wrapped)))),
-						A2(
-							elm$core$List$cons,
-							mdgriffith$elm_ui$Element$width(mdgriffith$elm_ui$Element$shrink),
-							A2(
-								elm$core$List$cons,
-								mdgriffith$elm_ui$Element$height(mdgriffith$elm_ui$Element$shrink),
-								_Utils_ap(
-									attrs,
-									_List_fromArray(
-										[pad]))))),
-					mdgriffith$elm_ui$Internal$Model$Unkeyed(children));
-			} else {
-				var halfY = -(y / 2);
-				var halfX = -(x / 2);
-				return A4(
-					mdgriffith$elm_ui$Internal$Model$element,
-					mdgriffith$elm_ui$Internal$Model$asEl,
-					mdgriffith$elm_ui$Internal$Model$div,
-					attrs,
-					mdgriffith$elm_ui$Internal$Model$Unkeyed(
-						_List_fromArray(
-							[
-								A4(
-								mdgriffith$elm_ui$Internal$Model$element,
-								mdgriffith$elm_ui$Internal$Model$asRow,
-								mdgriffith$elm_ui$Internal$Model$div,
-								A2(
-									elm$core$List$cons,
-									mdgriffith$elm_ui$Internal$Model$htmlClass(mdgriffith$elm_ui$Internal$Style$classes.contentLeft + (' ' + (mdgriffith$elm_ui$Internal$Style$classes.contentCenterY + (' ' + mdgriffith$elm_ui$Internal$Style$classes.wrapped)))),
-									A2(
-										elm$core$List$cons,
-										mdgriffith$elm_ui$Internal$Model$Attr(
-											A2(
-												elm$html$Html$Attributes$style,
-												'margin',
-												elm$core$String$fromFloat(halfY) + ('px' + (' ' + (elm$core$String$fromFloat(halfX) + 'px'))))),
-										A2(
-											elm$core$List$cons,
-											mdgriffith$elm_ui$Internal$Model$Attr(
-												A2(
-													elm$html$Html$Attributes$style,
-													'width',
-													'calc(100% + ' + (elm$core$String$fromInt(x) + 'px)'))),
-											A2(
-												elm$core$List$cons,
-												mdgriffith$elm_ui$Internal$Model$Attr(
-													A2(
-														elm$html$Html$Attributes$style,
-														'height',
-														'calc(100% + ' + (elm$core$String$fromInt(y) + 'px)'))),
-												A2(
-													elm$core$List$cons,
-													A2(
-														mdgriffith$elm_ui$Internal$Model$StyleClass,
-														mdgriffith$elm_ui$Internal$Flag$spacing,
-														A3(mdgriffith$elm_ui$Internal$Model$SpacingStyle, spaceName, x, y)),
-													_List_Nil))))),
-								mdgriffith$elm_ui$Internal$Model$Unkeyed(children))
-							])));
-			}
-		}
-	});
-var author$project$Main$buttonsRow = function (model) {
-	return A2(
-		mdgriffith$elm_ui$Element$wrappedRow,
-		_List_fromArray(
-			[
-				mdgriffith$elm_ui$Element$height(
-				mdgriffith$elm_ui$Element$px(80)),
-				mdgriffith$elm_ui$Element$width(mdgriffith$elm_ui$Element$fill),
-				mdgriffith$elm_ui$Element$centerX,
-				mdgriffith$elm_ui$Element$Font$color(
-				author$project$Colors$tertiary(1.0)),
-				mdgriffith$elm_ui$Element$spacing(10)
-			]),
-		_List_fromArray(
-			[
-				author$project$Main$addTaskButton,
-				(!_Utils_eq(model.last_edit, author$project$Main$NoEdit)) ? author$project$Main$rollbackButton : mdgriffith$elm_ui$Element$none,
-				A2(
-				elm$core$List$any,
-				function (task) {
-					return task.deleted;
-				},
-				elm$core$Dict$values(model.tasks)) ? author$project$Main$listDeletedButton : mdgriffith$elm_ui$Element$none,
-				A2(
-				elm$core$List$any,
-				function (task) {
-					return task.completed;
-				},
-				elm$core$Dict$values(model.tasks)) ? author$project$Main$listCompletedButton : mdgriffith$elm_ui$Element$none,
-				A2(
-				elm$core$List$any,
-				function (task) {
-					return !(task.completed || task.deleted);
-				},
-				elm$core$Dict$values(model.tasks)) ? author$project$Main$listActiveButton : mdgriffith$elm_ui$Element$none,
-				function () {
-				var _n0 = model.currentView;
-				switch (_n0.$) {
-					case 'ViewAll':
-						return (!elm$core$Dict$isEmpty(model.tasks)) ? author$project$Main$clearAllButton : mdgriffith$elm_ui$Element$none;
-					case 'ViewDeleted':
-						return author$project$Main$clearDeletedButton;
-					case 'ViewComplete':
-						return author$project$Main$clearCompleteButton;
-					default:
-						return mdgriffith$elm_ui$Element$none;
-				}
-			}()
-			]));
-};
 var mdgriffith$elm_ui$Internal$Flag$hover = mdgriffith$elm_ui$Internal$Flag$flag(33);
 var mdgriffith$elm_ui$Internal$Model$Hover = {$: 'Hover'};
 var mdgriffith$elm_ui$Internal$Model$PseudoSelector = F2(
@@ -13886,6 +13481,9 @@ var elm$core$Basics$never = function (_n0) {
 	}
 };
 var elm$virtual_dom$VirtualDom$mapAttribute = _VirtualDom_mapAttribute;
+var mdgriffith$elm_ui$Internal$Model$AlignY = function (a) {
+	return {$: 'AlignY', a: a};
+};
 var elm$virtual_dom$VirtualDom$map = _VirtualDom_map;
 var mdgriffith$elm_ui$Internal$Model$map = F2(
 	function (fn, el) {
@@ -14012,140 +13610,128 @@ var author$project$Main$listActiveTasksView = function (model) {
 	return A2(
 		mdgriffith$elm_ui$Element$column,
 		_List_Nil,
-		_Utils_ap(
-			A2(
-				elm$core$List$map,
-				function (_n0) {
-					var id = _n0.a;
-					var task = _n0.b;
-					return A2(
-						mdgriffith$elm_ui$Element$Input$button,
-						_List_fromArray(
-							[
-								mdgriffith$elm_ui$Element$width(
-								mdgriffith$elm_ui$Element$px(120)),
-								mdgriffith$elm_ui$Element$height(
-								mdgriffith$elm_ui$Element$px(36)),
-								mdgriffith$elm_ui$Element$Font$size(14),
-								mdgriffith$elm_ui$Element$padding(10),
-								mdgriffith$elm_ui$Element$mouseOver(
-								_List_fromArray(
-									[
-										mdgriffith$elm_ui$Element$Background$color(
-										author$project$Colors$primary(0.6))
-									]))
-							]),
-						{
-							label: mdgriffith$elm_ui$Element$text(task.name),
-							onPress: elm$core$Maybe$Just(
-								author$project$Main$LaunchItemMenu(id))
-						});
-				},
-				elm$core$Dict$toList(
-					A2(
-						elm$core$Dict$filter,
-						F2(
-							function (id, task) {
-								return !(task.completed || task.deleted);
-							}),
-						model.tasks))),
-			_List_fromArray(
-				[
-					author$project$Main$buttonsRow(model)
-				])));
+		A2(
+			elm$core$List$map,
+			function (_n0) {
+				var id = _n0.a;
+				var task = _n0.b;
+				return A2(
+					mdgriffith$elm_ui$Element$Input$button,
+					_List_fromArray(
+						[
+							mdgriffith$elm_ui$Element$width(
+							mdgriffith$elm_ui$Element$px(120)),
+							mdgriffith$elm_ui$Element$height(
+							mdgriffith$elm_ui$Element$px(36)),
+							mdgriffith$elm_ui$Element$Font$size(14),
+							mdgriffith$elm_ui$Element$padding(10),
+							mdgriffith$elm_ui$Element$mouseOver(
+							_List_fromArray(
+								[
+									mdgriffith$elm_ui$Element$Background$color(
+									author$project$Colors$primary(0.6))
+								]))
+						]),
+					{
+						label: mdgriffith$elm_ui$Element$text(task.name),
+						onPress: elm$core$Maybe$Just(
+							author$project$Main$LaunchItemMenu(id))
+					});
+			},
+			elm$core$Dict$toList(
+				A2(
+					elm$core$Dict$filter,
+					F2(
+						function (id, task) {
+							return !(task.completed || task.deleted);
+						}),
+					model.tasks))));
 };
 var author$project$Main$listCompletedTasksView = function (model) {
 	return A2(
 		mdgriffith$elm_ui$Element$column,
 		_List_Nil,
-		_Utils_ap(
+		A2(
+			elm$core$List$map,
+			function (_n0) {
+				var id = _n0.a;
+				var task = _n0.b;
+				return A2(
+					mdgriffith$elm_ui$Element$Input$button,
+					_List_fromArray(
+						[
+							mdgriffith$elm_ui$Element$width(
+							mdgriffith$elm_ui$Element$px(120)),
+							mdgriffith$elm_ui$Element$height(
+							mdgriffith$elm_ui$Element$px(36)),
+							mdgriffith$elm_ui$Element$Font$size(14),
+							mdgriffith$elm_ui$Element$padding(10),
+							mdgriffith$elm_ui$Element$mouseOver(
+							_List_fromArray(
+								[
+									mdgriffith$elm_ui$Element$Background$color(
+									author$project$Colors$primary(0.6))
+								]))
+						]),
+					{
+						label: mdgriffith$elm_ui$Element$text(task.name),
+						onPress: elm$core$Maybe$Just(
+							author$project$Main$LaunchItemMenu(id))
+					});
+			},
 			A2(
-				elm$core$List$map,
-				function (_n0) {
-					var id = _n0.a;
-					var task = _n0.b;
-					return A2(
-						mdgriffith$elm_ui$Element$Input$button,
-						_List_fromArray(
-							[
-								mdgriffith$elm_ui$Element$width(
-								mdgriffith$elm_ui$Element$px(120)),
-								mdgriffith$elm_ui$Element$height(
-								mdgriffith$elm_ui$Element$px(36)),
-								mdgriffith$elm_ui$Element$Font$size(14),
-								mdgriffith$elm_ui$Element$padding(10),
-								mdgriffith$elm_ui$Element$mouseOver(
-								_List_fromArray(
-									[
-										mdgriffith$elm_ui$Element$Background$color(
-										author$project$Colors$primary(0.6))
-									]))
-							]),
-						{
-							label: mdgriffith$elm_ui$Element$text(task.name),
-							onPress: elm$core$Maybe$Just(
-								author$project$Main$LaunchItemMenu(id))
-						});
+				elm$core$List$filter,
+				function (_n1) {
+					var id = _n1.a;
+					var task = _n1.b;
+					return task.completed;
 				},
-				A2(
-					elm$core$List$filter,
-					function (_n1) {
-						var id = _n1.a;
-						var task = _n1.b;
-						return task.completed;
-					},
-					elm$core$Dict$toList(model.tasks))),
-			_List_fromArray(
-				[
-					author$project$Main$buttonsRow(model)
-				])));
+				elm$core$Dict$toList(model.tasks))));
 };
 var author$project$Main$listDeletedTasksView = function (model) {
 	return A2(
 		mdgriffith$elm_ui$Element$column,
 		_List_Nil,
-		_Utils_ap(
+		A2(
+			elm$core$List$map,
+			function (_n0) {
+				var id = _n0.a;
+				var task = _n0.b;
+				return A2(
+					mdgriffith$elm_ui$Element$Input$button,
+					_List_fromArray(
+						[
+							mdgriffith$elm_ui$Element$width(
+							mdgriffith$elm_ui$Element$px(120)),
+							mdgriffith$elm_ui$Element$height(
+							mdgriffith$elm_ui$Element$px(36)),
+							mdgriffith$elm_ui$Element$Font$size(14),
+							mdgriffith$elm_ui$Element$padding(10),
+							mdgriffith$elm_ui$Element$mouseOver(
+							_List_fromArray(
+								[
+									mdgriffith$elm_ui$Element$Background$color(
+									author$project$Colors$primary(0.6))
+								]))
+						]),
+					{
+						label: mdgriffith$elm_ui$Element$text(task.name),
+						onPress: elm$core$Maybe$Just(
+							author$project$Main$LaunchItemMenu(id))
+					});
+			},
 			A2(
-				elm$core$List$map,
-				function (_n0) {
-					var id = _n0.a;
-					var task = _n0.b;
-					return A2(
-						mdgriffith$elm_ui$Element$Input$button,
-						_List_fromArray(
-							[
-								mdgriffith$elm_ui$Element$width(
-								mdgriffith$elm_ui$Element$px(120)),
-								mdgriffith$elm_ui$Element$height(
-								mdgriffith$elm_ui$Element$px(36)),
-								mdgriffith$elm_ui$Element$Font$size(14),
-								mdgriffith$elm_ui$Element$padding(10),
-								mdgriffith$elm_ui$Element$mouseOver(
-								_List_fromArray(
-									[
-										mdgriffith$elm_ui$Element$Background$color(
-										author$project$Colors$primary(0.6))
-									]))
-							]),
-						{
-							label: mdgriffith$elm_ui$Element$text(task.name),
-							onPress: elm$core$Maybe$Just(
-								author$project$Main$LaunchItemMenu(id))
-						});
+				elm$core$List$filter,
+				function (_n1) {
+					var id = _n1.a;
+					var task = _n1.b;
+					return task.deleted;
 				},
-				A2(
-					elm$core$List$filter,
-					function (_n1) {
-						var id = _n1.a;
-						var task = _n1.b;
-						return task.deleted;
-					},
-					elm$core$Dict$toList(model.tasks))),
-			_List_fromArray(
-				[
-					author$project$Main$buttonsRow(model)
-				])));
+				elm$core$Dict$toList(model.tasks))));
 };
+var author$project$Main$Active = {$: 'Active'};
+var author$project$Main$Completed = {$: 'Completed'};
+var author$project$Main$Deleted = {$: 'Deleted'};
 var author$project$Main$CompleteToDo = function (a) {
 	return {$: 'CompleteToDo', a: a};
 };
@@ -14155,6 +13741,8 @@ var author$project$Main$DeleteToDo = function (a) {
 var author$project$Main$EditToDo = function (a) {
 	return {$: 'EditToDo', a: a};
 };
+var mdgriffith$elm_ui$Internal$Model$CenterY = {$: 'CenterY'};
+var mdgriffith$elm_ui$Element$centerY = mdgriffith$elm_ui$Internal$Model$AlignY(mdgriffith$elm_ui$Internal$Model$CenterY);
 var mdgriffith$elm_ui$Internal$Flag$rotate = mdgriffith$elm_ui$Internal$Flag$flag(24);
 var mdgriffith$elm_ui$Internal$Model$Rotate = F2(
 	function (a, b) {
@@ -14306,6 +13894,31 @@ var author$project$Main$launchItemMenu = function (model) {
 		return mdgriffith$elm_ui$Element$none;
 	}
 };
+var mdgriffith$elm_ui$Element$Font$strike = mdgriffith$elm_ui$Internal$Model$htmlClass(mdgriffith$elm_ui$Internal$Style$classes.strike);
+var author$project$Main$listItemStyle = function (item) {
+	switch (item.$) {
+		case 'Active':
+			return _List_fromArray(
+				[mdgriffith$elm_ui$Element$Font$bold]);
+		case 'Deleted':
+			return _List_fromArray(
+				[
+					mdgriffith$elm_ui$Element$Font$strike,
+					mdgriffith$elm_ui$Element$Font$color(
+					author$project$Colors$primary(0.5))
+				]);
+		default:
+			return _List_fromArray(
+				[
+					mdgriffith$elm_ui$Element$Font$color(
+					author$project$Colors$primary(0.5))
+				]);
+	}
+};
+var elm$core$String$cons = _String_cons;
+var elm$core$String$fromChar = function (_char) {
+	return A2(elm$core$String$cons, _char, '');
+};
 var mdgriffith$elm_ui$Internal$Model$OnLeft = {$: 'OnLeft'};
 var mdgriffith$elm_ui$Element$onLeft = function (element) {
 	return A2(mdgriffith$elm_ui$Internal$Model$Nearby, mdgriffith$elm_ui$Internal$Model$OnLeft, element);
@@ -14321,30 +13934,27 @@ var author$project$Main$listTasksView = function (model) {
 				var task = _n0.b;
 				return A2(
 					mdgriffith$elm_ui$Element$Input$button,
-					_List_fromArray(
-						[
-							mdgriffith$elm_ui$Element$width(
-							mdgriffith$elm_ui$Element$px(120)),
-							mdgriffith$elm_ui$Element$height(
-							mdgriffith$elm_ui$Element$px(36)),
-							mdgriffith$elm_ui$Element$Font$size(14),
-							mdgriffith$elm_ui$Element$padding(10),
-							mdgriffith$elm_ui$Element$mouseOver(
-							_List_fromArray(
-								[
-									mdgriffith$elm_ui$Element$Background$color(
-									author$project$Colors$primary(0.6))
-								])),
-							mdgriffith$elm_ui$Element$onLeft(
-							_Utils_eq(
+					_Utils_eq(
+						elm$core$Maybe$Just(id),
+						model.currentToDoID) ? A2(
+						elm$core$List$append,
+						_List_fromArray(
+							[
+								mdgriffith$elm_ui$Element$onLeft(
+								author$project$Main$launchItemMenu(model))
+							]),
+						author$project$Main$listItemStyle(author$project$Main$Active)) : (task.deleted ? author$project$Main$listItemStyle(author$project$Main$Deleted) : (task.completed ? author$project$Main$listItemStyle(author$project$Main$Completed) : _List_Nil)),
+					function () {
+						var leader = elm$core$String$fromChar(
+							task.completed ? _Utils_chr('✓') : (task.deleted ? _Utils_chr('✘') : _Utils_chr('☉')));
+						return {
+							label: mdgriffith$elm_ui$Element$text(leader + (' ' + task.name)),
+							onPress: (!_Utils_eq(
 								elm$core$Maybe$Just(id),
-								model.currentToDoID) ? author$project$Main$launchItemMenu(model) : mdgriffith$elm_ui$Element$none)
-						]),
-					{
-						label: mdgriffith$elm_ui$Element$text(task.name),
-						onPress: elm$core$Maybe$Just(
-							author$project$Main$LaunchItemMenu(id))
-					});
+								model.currentToDoID)) ? elm$core$Maybe$Just(
+								author$project$Main$LaunchItemMenu(id)) : elm$core$Maybe$Nothing
+						};
+					}());
 			},
 			elm$core$Dict$toList(model.tasks)));
 };
@@ -14951,6 +14561,8 @@ var elm$browser$Debugger$Overlay$viewBadMetadata = function (_n0) {
 var elm$browser$Debugger$Overlay$Cancel = {$: 'Cancel'};
 var elm$browser$Debugger$Overlay$Proceed = {$: 'Proceed'};
 var elm$html$Html$button = _VirtualDom_node('button');
+var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
+var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
 var elm$browser$Debugger$Overlay$viewButtons = function (buttons) {
 	var btn = F2(
 		function (msg, string) {
@@ -16707,6 +16319,16 @@ var elm$browser$Debugger$Metadata$collectBadAliases = F3(
 				list);
 		}
 	});
+var elm$core$Dict$values = function (dict) {
+	return A3(
+		elm$core$Dict$foldr,
+		F3(
+			function (key, value, valueList) {
+				return A2(elm$core$List$cons, value, valueList);
+			}),
+		_List_Nil,
+		dict);
+};
 var elm$browser$Debugger$Metadata$collectBadUnions = F3(
 	function (name, _n0, list) {
 		var tags = _n0.tags;
