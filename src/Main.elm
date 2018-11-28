@@ -1,7 +1,9 @@
 module Main exposing (..)
 
 import Browser
+import Browser.Dom as Dom
 import Html
+import Html.Attributes exposing (id)
 import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
@@ -9,7 +11,10 @@ import Element.Font as Font
 import Element.Input as Input
 import Element.Lazy
 import Element.Events
-import List.Extra exposing (..)
+
+
+--import List.Extra exposing (..)
+
 import ThingToDo exposing (..)
 import Task
 import Colors exposing (..)
@@ -38,6 +43,7 @@ type alias Model =
     , cacheName : String
     , cacheDesc : String
     , openMenu : Menu
+    , focusedElement : String
     }
 
 
@@ -73,7 +79,7 @@ getCurrentToDo model =
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( { tasks = Dict.empty, currentToDoID = Nothing, last_edit = NoEdit, cacheName = "", cacheDesc = "", openMenu = None, currentView = ViewAll }, Cmd.none )
+    ( { tasks = Dict.empty, currentToDoID = Nothing, last_edit = NoEdit, cacheName = "", cacheDesc = "", openMenu = None, currentView = ViewAll, focusedElement = "mainMenu" }, Cmd.none )
 
 
 
@@ -135,113 +141,13 @@ baseView model =
 
                 _ ->
                     Element.none
-               --buttonsRow model
               )
             ]
         , row [ centerX ]
-            [ Input.button [ Element.above (launchMainMenu model), Border.rounded 16, width (px 16), height (px 16), alignBottom, Element.moveUp 32, centerX, Element.scale 3 ] { onPress = Just LaunchMainMenu, label = Element.image [] { src = "src/Icons/burgermenuicon.svg", description = "open main menu icon" } }
+            [ Input.button [ Element.above (launchMainMenu model), Border.rounded 16, width (px 16), height (px 16), alignBottom, Element.moveUp 32, centerX, Element.scale 3, Element.htmlAttribute (Html.Attributes.id "mainMenu") ] { onPress = Just LaunchMainMenu, label = Element.image [] { src = "src/Icons/burgermenuicon.svg", description = "open main menu icon" } }
             ]
         ]
     )
-
-
-buttonsRow : Model -> Element Msg
-buttonsRow model =
-    wrappedRow
-        [ height (px 80)
-        , width fill
-        , centerX
-        , Font.color (tertiary 1.0)
-        , spacing 10
-        ]
-    <|
-        [ addTaskButton
-        , (if model.last_edit /= NoEdit then
-            rollbackButton
-           else
-            Element.none
-          )
-        , (if (List.any (\task -> task.deleted) (Dict.values model.tasks)) then
-            listDeletedButton
-           else
-            Element.none
-          )
-        , (if (List.any (\task -> task.completed) (Dict.values model.tasks)) then
-            listCompletedButton
-           else
-            Element.none
-          )
-        , (if (List.any (\task -> not (task.completed || task.deleted)) (Dict.values model.tasks)) then
-            listActiveButton
-           else
-            Element.none
-          )
-        , (case model.currentView of
-            ViewAll ->
-                (if not (Dict.isEmpty model.tasks) then
-                    clearAllButton
-                 else
-                    Element.none
-                )
-
-            ViewDeleted ->
-                clearDeletedButton
-
-            ViewComplete ->
-                clearCompleteButton
-
-            _ ->
-                Element.none
-          )
-        ]
-
-
-addTaskButton : Element Msg
-addTaskButton =
-    Input.button [ centerX, width (fillPortion 1), height (px 36), Background.color (primary 1.0), Font.size 14, padding 12, Font.color (secondary 0.8), Font.bold ]
-        { onPress = Just AddNewToDo, label = Element.text "Add a new task" }
-
-
-rollbackButton : Element Msg
-rollbackButton =
-    Input.button [ width (fillPortion 1), height (px 36), Background.color (primary 1.0), Font.size 14, padding 6, centerY, Font.color (secondary 0.8), Font.bold ]
-        { onPress = Just Rollback, label = Element.text "Undo last change" }
-
-
-listDeletedButton : Element Msg
-listDeletedButton =
-    Input.button [ width (fillPortion 1), height (px 36), Background.color (primary 1.0), Font.size 14, paddingXY 18 8, centerY, Font.color (secondary 0.8), Font.bold ]
-        { onPress = Just ListDeleted, label = Element.text "Show Deleted" }
-
-
-listCompletedButton : Element Msg
-listCompletedButton =
-    Input.button [ width (fillPortion 1), height (px 36), Background.color (primary 1.0), Font.size 14, paddingXY 18 8, centerY, Font.color (secondary 0.8), Font.bold ]
-        { onPress = Just ListCompleted, label = Element.text "Show Completed" }
-
-
-listActiveButton : Element Msg
-listActiveButton =
-    Input.button [ width (fillPortion 1), height (px 36), Background.color (primary 1.0), Font.size 14, paddingXY 18 8, centerY, Font.color (secondary 0.8), Font.bold ]
-        { onPress = Just ListActive, label = Element.text "Show Active" }
-
-
-clearAllButton : Element Msg
-clearAllButton =
-    Input.button [ width (fillPortion 1), height (px 36), Background.color (primary 1.0), Font.size 14, paddingXY 18 8, centerY, Font.color (secondary 0.8), Font.bold ]
-        { onPress = Just ClearAll, label = Element.text "Clear All" }
-
-
-clearDeletedButton : Element Msg
-clearDeletedButton =
-    Input.button [ width (fillPortion 1), height (px 36), Background.color (primary 1.0), Font.size 14, paddingXY 18 8, centerY, Font.color (secondary 0.8), Font.bold ]
-        { onPress = Just ClearDeleted, label = Element.text "Clear Deleted" }
-
-
-clearCompleteButton : Element Msg
-clearCompleteButton =
-    Input.button [ width (fillPortion 1), height (px 36), Background.color (primary 1.0), Font.size 14, paddingXY 18 8, centerY, Font.color (secondary 0.8), Font.bold ]
-        { onPress = Just ClearComplete, label = Element.text "Clear Complete" }
 
 
 editView : Model -> ThingToDo -> Element Msg
@@ -255,7 +161,7 @@ editView model currTask =
         , spacing 10
         ]
         [ el [] (Element.text ("Editing" ++ (Debug.toString model.currentToDoID)))
-        , (Input.text []
+        , (Input.text [ Input.focusedOnLoad ]
             { onChange = \text -> UpdateToDoName text
             , text = model.cacheName
             , placeholder = Nothing
@@ -317,64 +223,15 @@ listTasksView model =
         )
 
 
-
-{--[ Input.radio [ Font.size 24, Font.color (Colors.primary 1) ]--}
---{ onChange = \id -> LaunchItemMenu id
---, selected = model.currentToDoID --Nothing
---, label = Input.labelAbove [] (text "")
---, options =
---(List.map
---(\( id, task ) ->
---Input.option id
-{--(Element.el--}
---(if Just id == model.currentToDoID then
---(List.append [ Element.onLeft (launchItemMenu model) ]
---(listItemStyle Active)
---)
---else if task.deleted then
---listItemStyle Deleted
---else if task.completed then
---listItemStyle Completed
---else
---[]
---)
----- need to add styling for deleted/completed/active
---(let
---leader =
---String.fromChar
---(if task.completed then
---'✓'
---else if task.deleted then
---'✘'
---else
---'☉'
---)
---in
---(Element.text
---(leader ++ " " ++ task.name)
---)
---)
-{--)--}
---)
---(Dict.toList model.tasks)
---)
---}
-
-
-
-{--]--}
-
-
 listDeletedTasksView : Model -> Element Msg
 listDeletedTasksView model =
     column []
         ((List.map
             (\( id, task ) ->
-                Input.button [ width (px 120), height (px 36), Font.size 14, padding 10, mouseOver [ Background.color (Colors.primary 0.6) ] ] { onPress = Just (LaunchItemMenu id), label = Element.text task.name }
+                Input.button [ Element.onLeft (launchItemMenu model), width (px 120), height (px 36), Font.size 14, padding 10, mouseOver [ Background.color (Colors.primary 0.6) ] ] { onPress = Just (LaunchItemMenu id), label = Element.text task.name }
             )
             (List.filter (\( id, task ) -> task.deleted) (Dict.toList model.tasks))
          )
-         --++ [ buttonsRow model ]
         )
 
 
@@ -383,11 +240,10 @@ listCompletedTasksView model =
     column []
         ((List.map
             (\( id, task ) ->
-                Input.button [ width (px 120), height (px 36), Font.size 14, padding 10, mouseOver [ Background.color (Colors.primary 0.6) ] ] { onPress = Just (LaunchItemMenu id), label = Element.text task.name }
+                Input.button [ Element.onLeft (launchItemMenu model), width (px 120), height (px 36), Font.size 14, padding 10, mouseOver [ Background.color (Colors.primary 0.6) ] ] { onPress = Just (LaunchItemMenu id), label = Element.text task.name }
             )
             (List.filter (\( id, task ) -> task.completed) (Dict.toList model.tasks))
          )
-         --++ [ buttonsRow model ]
         )
 
 
@@ -400,7 +256,6 @@ listActiveTasksView model =
             )
             (Dict.toList (Dict.filter (\id task -> not (task.completed || task.deleted)) (model.tasks)))
          )
-         --++ [ buttonsRow model ]
         )
 
 
@@ -729,6 +584,102 @@ launchMainMenu model =
                         ]
                     )
 
+                Editing ->
+                    (row
+                        [ width (px 100)
+                        , height (px 40)
+                        , Element.moveDown 8
+                        , Element.moveLeft 40
+                        , Element.behindContent
+                            (Element.image [ Element.scale 1 ]
+                                { src = "src/Icons/arcmenu.svg"
+                                , description = "background for main menu"
+                                }
+                            )
+                        , Element.Events.onMouseLeave CloseModal
+                        ]
+                        [ Input.button [ width (px 16), height (px 16), Border.rounded 16, Element.moveRight 4, Element.moveDown 8 ]
+                            { onPress = Just AddNewToDo
+                            , label = Element.image [ Element.scale 1 ] { src = "src/Icons/addicon.svg", description = "icon to add item" }
+                            }
+                        , Input.button [ width (px 16), height (px 16), Border.rounded 16, Element.moveRight 6, Element.moveUp 4 ]
+                            { onPress =
+                                (if not (Dict.isEmpty model.tasks) then
+                                    Just ClearAll
+                                 else
+                                    Just CloseModal
+                                )
+                            , label =
+                                Element.image
+                                    [ Element.scale 1
+                                    , (if not (Dict.isEmpty model.tasks) then
+                                        Element.alpha 1
+                                       else
+                                        Element.alpha 0.3
+                                      )
+                                    ]
+                                    { src = "src/Icons/clearallicon.svg", description = "icon to clear all items" }
+                            }
+                        , Input.button [ width (px 16), height (px 16), Border.rounded 16, Element.moveRight 10, Element.moveUp 8.2 ]
+                            { onPress =
+                                (if Dict.isEmpty (Dict.filter (\id task -> task.completed) model.tasks) then
+                                    Nothing
+                                 else
+                                    Just ListCompleted
+                                )
+                            , label =
+                                Element.image
+                                    [ Element.scale 1
+                                    , Element.alpha
+                                        (if Dict.isEmpty (Dict.filter (\id task -> task.completed) model.tasks) then
+                                            0.4
+                                         else
+                                            1
+                                        )
+                                    ]
+                                    { src = "src/Icons/viewcompleted.svg", description = "icon to view completed items" }
+                            }
+                        , Input.button [ width (px 16), height (px 16), Border.rounded 16, Element.moveRight 14, Element.moveUp 4 ]
+                            { onPress =
+                                (if Dict.isEmpty (Dict.filter (\id task -> task.deleted) model.tasks) then
+                                    Nothing
+                                 else
+                                    Just ListDeleted
+                                )
+                            , label =
+                                Element.image
+                                    [ Element.scale 1
+                                    , Element.alpha
+                                        (if Dict.isEmpty (Dict.filter (\id task -> task.deleted) model.tasks) then
+                                            0.4
+                                         else
+                                            1
+                                        )
+                                    ]
+                                    { src = "src/Icons/viewdeleted.svg", description = "icon to view deleted items" }
+                            }
+                        , Input.button [ width (px 16), height (px 16), Border.rounded 16, Element.moveRight 16, Element.moveDown 8 ]
+                            { onPress =
+                                (if model.last_edit /= NoEdit then
+                                    Just Rollback
+                                 else
+                                    Nothing
+                                )
+                            , label =
+                                Element.image
+                                    [ Element.scale 1
+                                    , Element.alpha
+                                        (if model.last_edit == NoEdit then
+                                            0.4
+                                         else
+                                            1
+                                        )
+                                    ]
+                                    { src = "src/Icons/undoicon.svg", description = "icon to undo last change" }
+                            }
+                        ]
+                    )
+
                 _ ->
                     Element.none
 
@@ -761,6 +712,7 @@ type Msg
       --| ListNotDeleted
     | ListActive
     | CloseModal
+    | NoOp
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -778,8 +730,10 @@ update msg model =
                     | currentToDoID = Just id
                     , openMenu = None
                     , currentView = Editing
+                    , focusedElement = "taskName"
                   }
-                , Cmd.none
+                , (Task.attempt (\_ -> NoOp) (Dom.focus model.focusedElement))
+                  --Cmd.none
                 )
 
         LaunchItemMenu id ->
@@ -908,7 +862,7 @@ update msg model =
             ( { model | currentView = ViewActive, openMenu = None }, Cmd.none )
 
         ListAll ->
-            ( { model | currentView = ViewAll, openMenu = None }, Cmd.none )
+            ( { model | currentView = ViewAll, openMenu = None, focusedElement = "mainMenu" }, (Task.attempt (\_ -> NoOp) (Dom.focus model.focusedElement)) )
 
         ClearAll ->
             ( { model | tasks = (Dict.empty), openMenu = None, currentView = ViewAll, last_edit = Previous model }, Cmd.none )
@@ -928,7 +882,18 @@ update msg model =
                 ( { model | tasks = deleted, openMenu = None, currentView = ViewAll, last_edit = Previous model }, Cmd.none )
 
         CloseModal ->
-            ( { model | openMenu = None, currentToDoID = Nothing }, Cmd.none )
+            case model.openMenu of
+                ItemMenu ->
+                    ( { model | openMenu = None, currentToDoID = Nothing }, Cmd.none )
+
+                MainMenu ->
+                    ( { model | openMenu = None }, Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
+
+        NoOp ->
+            ( model, Cmd.none )
 
 
 
