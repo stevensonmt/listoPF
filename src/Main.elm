@@ -88,7 +88,7 @@ init _ =
 
 view : Model -> Html.Html Msg
 view model =
-    Element.layout [ padding 30, Background.color (Colors.tertiary 1.0) ] <|
+    Element.layoutWith { options = [ focusStyle { borderColor = Just (Colors.primary 0.5), backgroundColor = Just (Colors.secondary 1), shadow = Just { color = (Colors.primary 0.5), offset = ( 0, 0 ), blur = 2, size = 1 } } ] } [ padding 30, Background.color (Colors.tertiary 1.0) ] <|
         (baseView model)
 
 
@@ -125,26 +125,27 @@ baseView model =
             ]
             [ (case model.currentView of
                 ViewAll ->
-                    listTasksView model
+                    listTasks model
 
                 Editing ->
                     editView model (getCurrentToDo model)
 
                 ViewDeleted ->
-                    listDeletedTasksView model
+                    listTasks model
 
                 ViewComplete ->
-                    listCompletedTasksView model
+                    listTasks model
 
                 ViewActive ->
-                    listActiveTasksView model
+                    listTasks model
 
                 _ ->
                     Element.none
               )
             ]
-        , row [ centerX ]
-            [ Input.button [ Element.above (launchMainMenu model), Border.rounded 16, width (px 16), height (px 16), alignBottom, Element.moveUp 32, centerX, Element.scale 3, Element.htmlAttribute (Html.Attributes.id "mainMenu") ] { onPress = Just LaunchMainMenu, label = Element.image [] { src = "src/Icons/burgermenuicon.svg", description = "open main menu icon" } }
+        , column [ centerX, width fill ]
+            [ el [ Element.scale 3, centerX, Element.moveUp 28, Element.moveLeft 30, Element.above (launchMainMenu model) ] Element.none
+            , Input.button [ Border.rounded 16, width (px 16), height (px 16), alignBottom, Element.moveUp 32, centerX, Element.scale 3, Element.htmlAttribute (Html.Attributes.id "mainMenu") ] { onPress = Just LaunchMainMenu, label = Element.image [] { src = "src/Icons/burgermenuicon.svg", description = "open main menu icon" } }
             ]
         ]
     )
@@ -160,103 +161,129 @@ editView model currTask =
         , Font.color (Colors.primary 1)
         , spacing 10
         ]
-        [ el [] (Element.text ("Editing" ++ (Debug.toString model.currentToDoID)))
-        , (Input.text [ Input.focusedOnLoad ]
+        [ el [] (Element.text ("Editing current item id#: " ++ (Debug.toString model.currentToDoID)))
+        , (Input.text [ Border.rounded 8, Background.color (Colors.tertiary 1), Element.focused [ Background.color (Element.rgb255 245 242 238), Border.shadow { offset = ( 0, 0 ), size = 1, blur = 8, color = (Colors.primary 0.5) } ], Input.focusedOnLoad, Element.htmlAttribute (Html.Attributes.id "task name input") ]
             { onChange = \text -> UpdateToDoName text
             , text = model.cacheName
             , placeholder = Nothing
             , label = Input.labelAbove [ Font.size 14 ] (Element.text "Add Task Name Here")
             }
           )
-        , (Input.text []
+        , (Input.text [ Border.rounded 8, Background.color (Colors.tertiary 1), Element.focused [ Background.color (Element.rgb255 245 242 238), Border.shadow { offset = ( 0, 0 ), size = 1, blur = 8, color = (Colors.primary 0.5) } ] ]
             { onChange = \text -> UpdateToDoDesc text
             , text = model.cacheDesc
             , placeholder = Nothing
             , label = Input.labelAbove [ Font.size 14 ] (Element.text "Add Task Description Here")
             }
           )
-        , Input.button [ Background.color (Colors.primary 1.0), Font.color (secondary 0.8), Font.bold, Font.size 14, padding 10 ]
-            { onPress = Just (UpdateThingToDo), label = Element.text "Submit Changes" }
+        , Input.button
+            [ Border.rounded 8
+            , Background.color (Colors.primary 1.0)
+            , Font.color
+                (if String.isEmpty model.cacheName then
+                    Colors.secondary 0.3
+                 else
+                    Element.rgb255 245 242 238
+                )
+            , Font.bold
+            , Font.size 24
+            , Font.variant Font.smallCaps
+            , padding 10
+            , Element.focused [ Background.color (Colors.primary 0.8) ]
+            ]
+            { onPress =
+                (if String.isEmpty model.cacheName then
+                    Nothing
+                 else
+                    Just UpdateThingToDo
+                )
+            , label = Element.text "Submit"
+            }
         ]
 
 
-listTasksView : Model -> Element Msg
-listTasksView model =
-    column []
-        ((List.map
-            (\( id, task ) ->
-                Input.button
-                    (if Just id == model.currentToDoID then
-                        (List.append [ Element.onLeft (launchItemMenu model) ]
-                            (listItemStyle Active)
-                        )
-                     else if task.deleted then
-                        listItemStyle Deleted
-                     else if task.completed then
-                        listItemStyle Completed
-                     else
-                        []
-                    )
-                    (let
-                        leader =
-                            String.fromChar
-                                (if task.completed then
-                                    '✓'
-                                 else if task.deleted then
-                                    '✘'
-                                 else
-                                    '☉'
+listTasks : Model -> Element Msg
+listTasks model =
+    let
+        ( title, tasklist, styleList ) =
+            case model.currentView of
+                ViewAll ->
+                    ( "All Tasks", (Dict.toList model.tasks), ( listItemStyle Active, ( listItemStyle Deleted, listItemStyle Completed ) ) )
+
+                ViewDeleted ->
+                    ( "Deleted Tasks", (List.filter (\( id, task ) -> task.deleted) (Dict.toList model.tasks)), ( [], ( [], [] ) ) )
+
+                ViewComplete ->
+                    ( "Completed Tasks", (List.filter (\( id, task ) -> task.completed) (Dict.toList model.tasks)), ( [], ( [], [] ) ) )
+
+                _ ->
+                    ( "", (Dict.toList model.tasks), ( [], ( [], [] ) ) )
+    in
+        column [ width fill ]
+            (List.append [ row [ centerX, paddingXY 12 8 ] [ Element.text title ] ]
+                (List.map
+                    (\( id, task ) ->
+                        Input.button
+                            (if Just id == model.currentToDoID then
+                                (List.append [ Element.onLeft (launchItemMenu model) ]
+                                    (Tuple.first styleList)
                                 )
-                     in
-                        { onPress =
-                            (if Just id /= model.currentToDoID then
-                                Just (LaunchItemMenu id)
+                             else if task.deleted then
+                                Tuple.first (Tuple.second styleList)
+                             else if task.completed then
+                                Tuple.second (Tuple.second styleList)
                              else
-                                Nothing
+                                []
                             )
-                        , label = Element.text (leader ++ " " ++ task.name)
-                        }
+                            (let
+                                leader =
+                                    if model.currentView /= ViewAll then
+                                        " "
+                                    else
+                                        String.fromChar
+                                            (if task.completed then
+                                                '✓'
+                                             else if task.deleted then
+                                                '✘'
+                                             else
+                                                '☉'
+                                            )
+                             in
+                                { onPress =
+                                    (if Just id /= model.currentToDoID then
+                                        Just (LaunchItemMenu id)
+                                     else
+                                        Nothing
+                                    )
+                                , label = Element.text (leader ++ " " ++ task.name)
+                                }
+                            )
                     )
+                    tasklist
+                )
             )
-            (Dict.toList model.tasks)
-         )
-        )
 
 
-listDeletedTasksView : Model -> Element Msg
-listDeletedTasksView model =
-    column []
-        ((List.map
-            (\( id, task ) ->
-                Input.button [ Element.onLeft (launchItemMenu model), width (px 120), height (px 36), Font.size 14, padding 10, mouseOver [ Background.color (Colors.primary 0.6) ] ] { onPress = Just (LaunchItemMenu id), label = Element.text task.name }
-            )
-            (List.filter (\( id, task ) -> task.deleted) (Dict.toList model.tasks))
-         )
-        )
 
-
-listCompletedTasksView : Model -> Element Msg
-listCompletedTasksView model =
-    column []
-        ((List.map
-            (\( id, task ) ->
-                Input.button [ Element.onLeft (launchItemMenu model), width (px 120), height (px 36), Font.size 14, padding 10, mouseOver [ Background.color (Colors.primary 0.6) ] ] { onPress = Just (LaunchItemMenu id), label = Element.text task.name }
-            )
-            (List.filter (\( id, task ) -> task.completed) (Dict.toList model.tasks))
-         )
-        )
-
-
-listActiveTasksView : Model -> Element Msg
-listActiveTasksView model =
-    column []
-        ((List.map
-            (\( id, task ) ->
-                Input.button [ width (px 120), height (px 36), Font.size 14, padding 10, mouseOver [ Background.color (Colors.primary 0.6) ] ] { onPress = Just (LaunchItemMenu id), label = Element.text task.name }
-            )
-            (Dict.toList (Dict.filter (\id task -> not (task.completed || task.deleted)) (model.tasks)))
-         )
-        )
+--listTasksView : Model -> Element Msg
+--listTasksView model =
+--listTasks "All Tasks" model.currentToDoID (Dict.toList model.tasks) model.openMenu
+--listDeletedTasksView : Model -> Element Msg
+--listDeletedTasksView model =
+--listTasks "Deleted Tasks" model.currentToDoID (List.filter (\( id, task ) -> task.deleted) (Dict.toList model.tasks)) model.openMenu
+--listCompletedTasksView : Model -> Element Msg
+--listCompletedTasksView model =
+--listTasks "Completed Tasks" model.currentToDoID (List.filter (\( id, task ) -> task.completed) (Dict.toList model.tasks)) model.openMenu
+--listActiveTasksView : Model -> Element Msg
+--listActiveTasksView model =
+--column []
+--((List.map
+--(\( id, task ) ->
+--Input.button [ width (px 120), height (px 36), Font.size 14, padding 10, mouseOver [ Background.color (Colors.primary 0.6) ] ] { onPress = Just (LaunchItemMenu id), label = Element.text task.name }
+--)
+--(Dict.toList (Dict.filter (\id task -> not (task.completed || task.deleted)) (model.tasks)))
+--)
+--)
 
 
 type ListItemStyle
@@ -275,7 +302,7 @@ listItemStyle item =
             [ Font.strike, Font.color (Colors.primary 0.5) ]
 
         Completed ->
-            [ Font.color (Colors.primary 0.5) ]
+            [ Font.color (Colors.primary 0.7) ]
 
 
 launchItemMenu : Model -> Element Msg
@@ -286,8 +313,8 @@ launchItemMenu model =
                 [ centerX
                 , centerY
                 , Element.moveUp 14
-                , Element.moveRight 26
-                , Element.behindContent (Element.image [ Element.rotate -1.571, Element.scale 3 ] { src = "src/Icons/arcmenu.svg", description = "background for item menu" })
+                , Element.moveRight 30
+                , Element.behindContent (Element.image [ Element.rotate -1.571, Element.scale 2 ] { src = "src/Icons/arcmenu.svg", description = "background for item menu" })
                 , padding 10
                 , spacing 4
                 , width (px 100)
@@ -295,46 +322,46 @@ launchItemMenu model =
                 , Element.Events.onMouseLeave CloseModal
                 ]
                 [ Input.button
-                    [ width (px 48)
-                    , height (px 48)
-                    , Border.rounded 48
+                    [ width (px 36) --48)
+                    , height (px 36) --48)
+                    , Border.rounded 36 --48
                     , Background.color (Colors.primary 0.0)
                     , Font.size 14
-                    , Element.moveUp 100
-                    , Element.moveRight 16
-                    , padding 10
+                    , Element.moveUp 90 --100
+                    , Element.moveRight 32 --16
+                    , padding 2 --10
                     , mouseOver [ Background.color (Colors.primary 0.6) ]
                     ]
                     { onPress = Just (EditToDo (Maybe.withDefault 0 model.currentToDoID))
-                    , label = Element.image [ Element.scale 3 ] { src = "src/Icons/editicon.svg", description = "icon to edit item" } --Element.text "Edit ToDo"
+                    , label = Element.image [ Element.scale 2 ] { src = "src/Icons/editicon.svg", description = "icon to edit item" } --Element.text "Edit ToDo"
                     }
                 , Input.button
-                    [ width (px 48)
-                    , height (px 48)
-                    , Border.rounded 48
+                    [ width (px 36) --48)
+                    , height (px 36) --48)
+                    , Border.rounded 36 --48
                     , Background.color (Colors.primary 0.0)
                     , Font.size 14
                     , padding 10
                     , Element.moveUp 64
-                    , Element.moveLeft 10
+                    , Element.moveLeft 1 --10
                     , mouseOver [ Background.color (Colors.primary 0.6) ]
                     ]
                     { onPress = Just (CompleteToDo (Maybe.withDefault 0 model.currentToDoID))
-                    , label = Element.image [ Element.scale 3 ] { src = "src/Icons/checkmark.svg", description = "icon to mark item complete" } --Element.text "Mark Complete"
+                    , label = Element.image [ Element.scale 2 ] { src = "src/Icons/checkmark.svg", description = "icon to mark item complete" } --Element.text "Mark Complete"
                     }
                 , Input.button
-                    [ width (px 48)
-                    , height (px 48)
-                    , Border.rounded 48
+                    [ width (px 36) --48)
+                    , height (px 36) --48)
+                    , Border.rounded 36 --48
                     , Background.color (Colors.primary 0.0)
                     , Font.size 14
                     , padding 10
-                    , Element.moveUp 28
-                    , Element.moveRight 18
+                    , Element.moveUp 18 --42 --28
+                    , Element.moveRight 32 --18
                     , mouseOver [ Background.color (Colors.primary 0.6) ]
                     ]
                     { onPress = Just (DeleteToDo (Maybe.withDefault 0 model.currentToDoID))
-                    , label = Element.image [ Element.scale 3 ] { src = "src/Icons/trashicon.svg", description = "icon to delete item" } -- Element.text "Delete"
+                    , label = Element.image [ Element.scale 2 ] { src = "src/Icons/trashicon.svg", description = "icon to delete item" } -- Element.text "Delete"
                     }
                 ]
             )
@@ -371,7 +398,7 @@ launchMainMenu model =
                                 (if not (Dict.isEmpty model.tasks) then
                                     Just ClearAll
                                  else
-                                    Just CloseModal
+                                    Nothing
                                 )
                             , label =
                                 Element.image
@@ -599,26 +626,26 @@ launchMainMenu model =
                         , Element.Events.onMouseLeave CloseModal
                         ]
                         [ Input.button [ width (px 16), height (px 16), Border.rounded 16, Element.moveRight 4, Element.moveDown 8 ]
-                            { onPress = Just AddNewToDo
-                            , label = Element.image [ Element.scale 1 ] { src = "src/Icons/addicon.svg", description = "icon to add item" }
+                            { onPress = Nothing --Just AddNewToDo
+                            , label = Element.image [ Element.scale 1, Element.alpha 0.4 ] { src = "src/Icons/addicon.svg", description = "icon to add item" }
                             }
                         , Input.button [ width (px 16), height (px 16), Border.rounded 16, Element.moveRight 6, Element.moveUp 4 ]
                             { onPress =
-                                (if not (Dict.isEmpty model.tasks) then
-                                    Just ClearAll
+                                (if (Dict.isEmpty model.tasks) then
+                                    Nothing
                                  else
-                                    Just CloseModal
+                                    Just ListAll
                                 )
                             , label =
                                 Element.image
                                     [ Element.scale 1
-                                    , (if not (Dict.isEmpty model.tasks) then
-                                        Element.alpha 1
-                                       else
+                                    , (if (Dict.isEmpty model.tasks) then
                                         Element.alpha 0.3
+                                       else
+                                        Element.alpha 1
                                       )
                                     ]
-                                    { src = "src/Icons/clearallicon.svg", description = "icon to clear all items" }
+                                    { src = "src/Icons/viewallicon.svg", description = "icon to list all items" }
                             }
                         , Input.button [ width (px 16), height (px 16), Border.rounded 16, Element.moveRight 10, Element.moveUp 8.2 ]
                             { onPress =
@@ -730,7 +757,9 @@ update msg model =
                     | currentToDoID = Just id
                     , openMenu = None
                     , currentView = Editing
-                    , focusedElement = "taskName"
+                    , focusedElement = "task name input"
+                    , cacheDesc = ""
+                    , cacheName = ""
                   }
                 , (Task.attempt (\_ -> NoOp) (Dom.focus model.focusedElement))
                   --Cmd.none
@@ -740,7 +769,17 @@ update msg model =
             ( { model | currentToDoID = Just id, openMenu = ItemMenu }, Cmd.none )
 
         LaunchMainMenu ->
-            ( { model | openMenu = MainMenu }, Cmd.none )
+            ( { model
+                | openMenu = MainMenu
+                , currentToDoID =
+                    (if model.currentView /= Editing then
+                        Nothing
+                     else
+                        model.currentToDoID
+                    )
+              }
+            , Cmd.none
+            )
 
         EditToDo id ->
             let
@@ -756,7 +795,8 @@ update msg model =
                             , openMenu = None
                             , currentView = Editing
                           }
-                        , Cmd.none
+                          --, Cmd.none
+                        , (Task.attempt (\_ -> NoOp) (Dom.focus model.focusedElement))
                         )
 
                     _ ->
@@ -846,8 +886,13 @@ update msg model =
                     | currentToDoID = Nothing
                     , cacheName = ""
                     , cacheDesc = ""
-                    , currentView = model.currentView
-                    , openMenu = None
+                    , currentView =
+                        (if (mdl.last_edit == NoEdit || model.currentView == Editing) then
+                            ViewAll
+                         else
+                            model.currentView
+                        )
+                    , openMenu = MainMenu --None
                   }
                 , Cmd.none
                 )
@@ -862,7 +907,7 @@ update msg model =
             ( { model | currentView = ViewActive, openMenu = None }, Cmd.none )
 
         ListAll ->
-            ( { model | currentView = ViewAll, openMenu = None, focusedElement = "mainMenu" }, (Task.attempt (\_ -> NoOp) (Dom.focus model.focusedElement)) )
+            ( { model | currentView = ViewAll, openMenu = None, currentToDoID = Nothing }, (Task.attempt (\_ -> NoOp) (Dom.focus model.focusedElement)) )
 
         ClearAll ->
             ( { model | tasks = (Dict.empty), openMenu = None, currentView = ViewAll, last_edit = Previous model }, Cmd.none )

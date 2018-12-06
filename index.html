@@ -9774,9 +9774,11 @@ var author$project$Main$update = F2(
 					_Utils_update(
 						model,
 						{
+							cacheDesc: '',
+							cacheName: '',
 							currentToDoID: elm$core$Maybe$Just(id),
 							currentView: author$project$Main$Editing,
-							focusedElement: 'taskName',
+							focusedElement: 'task name input',
 							openMenu: author$project$Main$None
 						}),
 					A2(
@@ -9799,7 +9801,10 @@ var author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{openMenu: author$project$Main$MainMenu}),
+						{
+							currentToDoID: (!_Utils_eq(model.currentView, author$project$Main$Editing)) ? elm$core$Maybe$Nothing : model.currentToDoID,
+							openMenu: author$project$Main$MainMenu
+						}),
 					elm$core$Platform$Cmd$none);
 			case 'EditToDo':
 				var id = msg.a;
@@ -9816,7 +9821,12 @@ var author$project$Main$update = F2(
 								currentView: author$project$Main$Editing,
 								openMenu: author$project$Main$None
 							}),
-						elm$core$Platform$Cmd$none);
+						A2(
+							elm$core$Task$attempt,
+							function (_n3) {
+								return author$project$Main$NoOp;
+							},
+							elm$browser$Browser$Dom$focus(model.focusedElement)));
 				} else {
 					return _Utils_Tuple2(
 						_Utils_update(
@@ -9874,7 +9884,7 @@ var author$project$Main$update = F2(
 							tasks: A3(
 								elm$core$Dict$update,
 								A2(elm$core$Maybe$withDefault, 0, model.currentToDoID),
-								function (_n3) {
+								function (_n4) {
 									return elm$core$Maybe$Just(newToDo);
 								},
 								model.tasks)
@@ -9897,7 +9907,7 @@ var author$project$Main$update = F2(
 							tasks: A3(
 								elm$core$Dict$update,
 								id,
-								function (_n5) {
+								function (_n6) {
 									return elm$core$Maybe$Just(compTask);
 								},
 								model.tasks)
@@ -9920,7 +9930,7 @@ var author$project$Main$update = F2(
 							tasks: A3(
 								elm$core$Dict$update,
 								id,
-								function (_n6) {
+								function (_n7) {
 									return elm$core$Maybe$Just(delTask);
 								},
 								model.tasks)
@@ -9928,9 +9938,9 @@ var author$project$Main$update = F2(
 					elm$core$Platform$Cmd$none);
 			case 'Rollback':
 				var mdl = function () {
-					var _n7 = model.last_edit;
-					if (_n7.$ === 'Previous') {
-						var mod = _n7.a;
+					var _n8 = model.last_edit;
+					if (_n8.$ === 'Previous') {
+						var mod = _n8.a;
 						return mod;
 					} else {
 						return model;
@@ -9939,7 +9949,13 @@ var author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						mdl,
-						{cacheDesc: '', cacheName: '', currentToDoID: elm$core$Maybe$Nothing, currentView: model.currentView, openMenu: author$project$Main$None}),
+						{
+							cacheDesc: '',
+							cacheName: '',
+							currentToDoID: elm$core$Maybe$Nothing,
+							currentView: (_Utils_eq(mdl.last_edit, author$project$Main$NoEdit) || _Utils_eq(model.currentView, author$project$Main$Editing)) ? author$project$Main$ViewAll : model.currentView,
+							openMenu: author$project$Main$MainMenu
+						}),
 					elm$core$Platform$Cmd$none);
 			case 'ListDeleted':
 				return _Utils_Tuple2(
@@ -9963,10 +9979,10 @@ var author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{currentView: author$project$Main$ViewAll, focusedElement: 'mainMenu', openMenu: author$project$Main$None}),
+						{currentToDoID: elm$core$Maybe$Nothing, currentView: author$project$Main$ViewAll, openMenu: author$project$Main$None}),
 					A2(
 						elm$core$Task$attempt,
-						function (_n8) {
+						function (_n9) {
 							return author$project$Main$NoOp;
 						},
 						elm$browser$Browser$Dom$focus(model.focusedElement)));
@@ -10018,8 +10034,8 @@ var author$project$Main$update = F2(
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'CloseModal':
-				var _n9 = model.openMenu;
-				switch (_n9.$) {
+				var _n10 = model.openMenu;
+				switch (_n10.$) {
 					case 'ItemMenu':
 						return _Utils_Tuple2(
 							_Utils_update(
@@ -10047,14 +10063,14 @@ var mdgriffith$elm_ui$Element$rgba255 = F4(
 	function (red, green, blue, a) {
 		return A4(mdgriffith$elm_ui$Internal$Model$Rgba, red / 255, green / 255, blue / 255, a);
 	});
-var author$project$Colors$tertiary = function (alpha) {
-	return A4(mdgriffith$elm_ui$Element$rgba255, 240, 235, 230, alpha);
-};
 var author$project$Colors$primary = function (alpha) {
 	return A4(mdgriffith$elm_ui$Element$rgba255, 96, 111, 100, alpha);
 };
 var author$project$Colors$secondary = function (alpha) {
 	return A4(mdgriffith$elm_ui$Element$rgba255, 230, 218, 206, alpha);
+};
+var author$project$Colors$tertiary = function (alpha) {
+	return A4(mdgriffith$elm_ui$Element$rgba255, 240, 235, 230, alpha);
 };
 var author$project$Main$LaunchMainMenu = {$: 'LaunchMainMenu'};
 var author$project$Main$UpdateThingToDo = {$: 'UpdateThingToDo'};
@@ -15228,14 +15244,166 @@ var mdgriffith$elm_ui$Internal$Model$Fill = function (a) {
 	return {$: 'Fill', a: a};
 };
 var mdgriffith$elm_ui$Element$fill = mdgriffith$elm_ui$Internal$Model$Fill(1);
-var mdgriffith$elm_ui$Internal$Flag$padding = mdgriffith$elm_ui$Internal$Flag$flag(2);
-var mdgriffith$elm_ui$Internal$Model$PaddingStyle = F5(
-	function (a, b, c, d, e) {
-		return {$: 'PaddingStyle', a: a, b: b, c: c, d: d, e: e};
+var mdgriffith$elm_ui$Internal$Flag$focus = mdgriffith$elm_ui$Internal$Flag$flag(31);
+var mdgriffith$elm_ui$Internal$Model$Focus = {$: 'Focus'};
+var mdgriffith$elm_ui$Internal$Model$PseudoSelector = F2(
+	function (a, b) {
+		return {$: 'PseudoSelector', a: a, b: b};
 	});
 var mdgriffith$elm_ui$Internal$Model$StyleClass = F2(
 	function (a, b) {
 		return {$: 'StyleClass', a: a, b: b};
+	});
+var elm$virtual_dom$VirtualDom$mapAttribute = _VirtualDom_mapAttribute;
+var mdgriffith$elm_ui$Internal$Model$AlignY = function (a) {
+	return {$: 'AlignY', a: a};
+};
+var mdgriffith$elm_ui$Internal$Model$Class = F2(
+	function (a, b) {
+		return {$: 'Class', a: a, b: b};
+	});
+var mdgriffith$elm_ui$Internal$Model$Describe = function (a) {
+	return {$: 'Describe', a: a};
+};
+var mdgriffith$elm_ui$Internal$Model$Nearby = F2(
+	function (a, b) {
+		return {$: 'Nearby', a: a, b: b};
+	});
+var mdgriffith$elm_ui$Internal$Model$NoAttribute = {$: 'NoAttribute'};
+var mdgriffith$elm_ui$Internal$Model$TransformComponent = F2(
+	function (a, b) {
+		return {$: 'TransformComponent', a: a, b: b};
+	});
+var mdgriffith$elm_ui$Internal$Model$Empty = {$: 'Empty'};
+var mdgriffith$elm_ui$Internal$Model$Text = function (a) {
+	return {$: 'Text', a: a};
+};
+var mdgriffith$elm_ui$Internal$Model$map = F2(
+	function (fn, el) {
+		switch (el.$) {
+			case 'Styled':
+				var styled = el.a;
+				return mdgriffith$elm_ui$Internal$Model$Styled(
+					{
+						html: F2(
+							function (add, context) {
+								return A2(
+									elm$virtual_dom$VirtualDom$map,
+									fn,
+									A2(styled.html, add, context));
+							}),
+						styles: styled.styles
+					});
+			case 'Unstyled':
+				var html = el.a;
+				return mdgriffith$elm_ui$Internal$Model$Unstyled(
+					A2(
+						elm$core$Basics$composeL,
+						elm$virtual_dom$VirtualDom$map(fn),
+						html));
+			case 'Text':
+				var str = el.a;
+				return mdgriffith$elm_ui$Internal$Model$Text(str);
+			default:
+				return mdgriffith$elm_ui$Internal$Model$Empty;
+		}
+	});
+var mdgriffith$elm_ui$Internal$Model$mapAttrFromStyle = F2(
+	function (fn, attr) {
+		switch (attr.$) {
+			case 'NoAttribute':
+				return mdgriffith$elm_ui$Internal$Model$NoAttribute;
+			case 'Describe':
+				var description = attr.a;
+				return mdgriffith$elm_ui$Internal$Model$Describe(description);
+			case 'AlignX':
+				var x = attr.a;
+				return mdgriffith$elm_ui$Internal$Model$AlignX(x);
+			case 'AlignY':
+				var y = attr.a;
+				return mdgriffith$elm_ui$Internal$Model$AlignY(y);
+			case 'Width':
+				var x = attr.a;
+				return mdgriffith$elm_ui$Internal$Model$Width(x);
+			case 'Height':
+				var x = attr.a;
+				return mdgriffith$elm_ui$Internal$Model$Height(x);
+			case 'Class':
+				var x = attr.a;
+				var y = attr.b;
+				return A2(mdgriffith$elm_ui$Internal$Model$Class, x, y);
+			case 'StyleClass':
+				var flag = attr.a;
+				var style = attr.b;
+				return A2(mdgriffith$elm_ui$Internal$Model$StyleClass, flag, style);
+			case 'Nearby':
+				var location = attr.a;
+				var elem = attr.b;
+				return A2(
+					mdgriffith$elm_ui$Internal$Model$Nearby,
+					location,
+					A2(mdgriffith$elm_ui$Internal$Model$map, fn, elem));
+			case 'Attr':
+				var htmlAttr = attr.a;
+				return mdgriffith$elm_ui$Internal$Model$Attr(
+					A2(elm$virtual_dom$VirtualDom$mapAttribute, fn, htmlAttr));
+			default:
+				var fl = attr.a;
+				var trans = attr.b;
+				return A2(mdgriffith$elm_ui$Internal$Model$TransformComponent, fl, trans);
+		}
+	});
+var mdgriffith$elm_ui$Internal$Model$removeNever = function (style) {
+	return A2(mdgriffith$elm_ui$Internal$Model$mapAttrFromStyle, elm$core$Basics$never, style);
+};
+var mdgriffith$elm_ui$Internal$Model$unwrapDecsHelper = F2(
+	function (attr, _n0) {
+		var styles = _n0.a;
+		var trans = _n0.b;
+		var _n1 = mdgriffith$elm_ui$Internal$Model$removeNever(attr);
+		switch (_n1.$) {
+			case 'StyleClass':
+				var style = _n1.b;
+				return _Utils_Tuple2(
+					A2(elm$core$List$cons, style, styles),
+					trans);
+			case 'TransformComponent':
+				var flag = _n1.a;
+				var component = _n1.b;
+				return _Utils_Tuple2(
+					styles,
+					A2(mdgriffith$elm_ui$Internal$Model$composeTransformation, trans, component));
+			default:
+				return _Utils_Tuple2(styles, trans);
+		}
+	});
+var mdgriffith$elm_ui$Internal$Model$unwrapDecorations = function (attrs) {
+	var _n0 = A3(
+		elm$core$List$foldl,
+		mdgriffith$elm_ui$Internal$Model$unwrapDecsHelper,
+		_Utils_Tuple2(_List_Nil, mdgriffith$elm_ui$Internal$Model$Untransformed),
+		attrs);
+	var styles = _n0.a;
+	var transform = _n0.b;
+	return A2(
+		elm$core$List$cons,
+		mdgriffith$elm_ui$Internal$Model$Transform(transform),
+		styles);
+};
+var mdgriffith$elm_ui$Element$focused = function (decs) {
+	return A2(
+		mdgriffith$elm_ui$Internal$Model$StyleClass,
+		mdgriffith$elm_ui$Internal$Flag$focus,
+		A2(
+			mdgriffith$elm_ui$Internal$Model$PseudoSelector,
+			mdgriffith$elm_ui$Internal$Model$Focus,
+			mdgriffith$elm_ui$Internal$Model$unwrapDecorations(decs)));
+};
+var mdgriffith$elm_ui$Element$htmlAttribute = mdgriffith$elm_ui$Internal$Model$Attr;
+var mdgriffith$elm_ui$Internal$Flag$padding = mdgriffith$elm_ui$Internal$Flag$flag(2);
+var mdgriffith$elm_ui$Internal$Model$PaddingStyle = F5(
+	function (a, b, c, d, e) {
+		return {$: 'PaddingStyle', a: a, b: b, c: c, d: d, e: e};
 	});
 var mdgriffith$elm_ui$Element$padding = function (x) {
 	return A2(
@@ -15275,6 +15443,10 @@ var mdgriffith$elm_ui$Internal$Model$Px = function (a) {
 	return {$: 'Px', a: a};
 };
 var mdgriffith$elm_ui$Element$px = mdgriffith$elm_ui$Internal$Model$Px;
+var mdgriffith$elm_ui$Element$rgb255 = F3(
+	function (red, green, blue) {
+		return A4(mdgriffith$elm_ui$Internal$Model$Rgba, red / 255, green / 255, blue / 255, 1);
+	});
 var mdgriffith$elm_ui$Internal$Flag$spacing = mdgriffith$elm_ui$Internal$Flag$flag(3);
 var mdgriffith$elm_ui$Internal$Model$SpacingStyle = F3(
 	function (a, b, c) {
@@ -15293,9 +15465,6 @@ var mdgriffith$elm_ui$Element$spacing = function (x) {
 			A2(mdgriffith$elm_ui$Internal$Model$spacingName, x, x),
 			x,
 			x));
-};
-var mdgriffith$elm_ui$Internal$Model$Text = function (a) {
-	return {$: 'Text', a: a};
 };
 var mdgriffith$elm_ui$Element$text = function (content) {
 	return mdgriffith$elm_ui$Internal$Model$Text(content);
@@ -15322,11 +15491,42 @@ var mdgriffith$elm_ui$Element$Background$color = function (clr) {
 			'background-color',
 			clr));
 };
+var mdgriffith$elm_ui$Internal$Flag$borderRound = mdgriffith$elm_ui$Internal$Flag$flag(17);
+var mdgriffith$elm_ui$Element$Border$rounded = function (radius) {
+	return A2(
+		mdgriffith$elm_ui$Internal$Model$StyleClass,
+		mdgriffith$elm_ui$Internal$Flag$borderRound,
+		A3(
+			mdgriffith$elm_ui$Internal$Model$Single,
+			'br-' + elm$core$String$fromInt(radius),
+			'border-radius',
+			elm$core$String$fromInt(radius) + 'px'));
+};
+var mdgriffith$elm_ui$Internal$Flag$shadows = mdgriffith$elm_ui$Internal$Flag$flag(19);
+var mdgriffith$elm_ui$Internal$Model$boxShadowName = function (shadow) {
+	return elm$core$String$concat(
+		_List_fromArray(
+			[
+				shadow.inset ? 'box-inset' : 'box-',
+				elm$core$String$fromFloat(shadow.offset.a) + 'px',
+				elm$core$String$fromFloat(shadow.offset.b) + 'px',
+				elm$core$String$fromFloat(shadow.blur) + 'px',
+				elm$core$String$fromFloat(shadow.size) + 'px',
+				mdgriffith$elm_ui$Internal$Model$formatColorClass(shadow.color)
+			]));
+};
+var mdgriffith$elm_ui$Element$Border$shadow = function (almostShade) {
+	var shade = {blur: almostShade.blur, color: almostShade.color, inset: false, offset: almostShade.offset, size: almostShade.size};
+	return A2(
+		mdgriffith$elm_ui$Internal$Model$StyleClass,
+		mdgriffith$elm_ui$Internal$Flag$shadows,
+		A3(
+			mdgriffith$elm_ui$Internal$Model$Single,
+			mdgriffith$elm_ui$Internal$Model$boxShadowName(shade),
+			'box-shadow',
+			mdgriffith$elm_ui$Internal$Model$formatBoxShadow(shade)));
+};
 var mdgriffith$elm_ui$Internal$Flag$fontWeight = mdgriffith$elm_ui$Internal$Flag$flag(13);
-var mdgriffith$elm_ui$Internal$Model$Class = F2(
-	function (a, b) {
-		return {$: 'Class', a: a, b: b};
-	});
 var mdgriffith$elm_ui$Element$Font$bold = A2(mdgriffith$elm_ui$Internal$Model$Class, mdgriffith$elm_ui$Internal$Flag$fontWeight, mdgriffith$elm_ui$Internal$Style$classes.bold);
 var mdgriffith$elm_ui$Internal$Flag$fontColor = mdgriffith$elm_ui$Internal$Flag$flag(14);
 var mdgriffith$elm_ui$Element$Font$color = function (fontColor) {
@@ -15348,6 +15548,32 @@ var mdgriffith$elm_ui$Element$Font$size = function (i) {
 		mdgriffith$elm_ui$Internal$Model$StyleClass,
 		mdgriffith$elm_ui$Internal$Flag$fontSize,
 		mdgriffith$elm_ui$Internal$Model$FontSize(i));
+};
+var mdgriffith$elm_ui$Internal$Model$VariantActive = function (a) {
+	return {$: 'VariantActive', a: a};
+};
+var mdgriffith$elm_ui$Element$Font$smallCaps = mdgriffith$elm_ui$Internal$Model$VariantActive('smcp');
+var mdgriffith$elm_ui$Internal$Flag$fontVariant = mdgriffith$elm_ui$Internal$Flag$flag(48);
+var mdgriffith$elm_ui$Element$Font$variant = function (_var) {
+	switch (_var.$) {
+		case 'VariantActive':
+			var name = _var.a;
+			return A2(mdgriffith$elm_ui$Internal$Model$Class, mdgriffith$elm_ui$Internal$Flag$fontVariant, 'v-' + name);
+		case 'VariantOff':
+			var name = _var.a;
+			return A2(mdgriffith$elm_ui$Internal$Model$Class, mdgriffith$elm_ui$Internal$Flag$fontVariant, 'v-' + (name + '-off'));
+		default:
+			var name = _var.a;
+			var index = _var.b;
+			return A2(
+				mdgriffith$elm_ui$Internal$Model$StyleClass,
+				mdgriffith$elm_ui$Internal$Flag$fontVariant,
+				A3(
+					mdgriffith$elm_ui$Internal$Model$Single,
+					'v-' + (name + ('-' + elm$core$String$fromInt(index))),
+					'font-feature-settings',
+					'\"' + (name + ('\" ' + elm$core$String$fromInt(index)))));
+	}
 };
 var elm$json$Json$Encode$bool = _Json_wrap;
 var elm$html$Html$Attributes$boolProperty = F2(
@@ -15376,7 +15602,6 @@ var mdgriffith$elm_ui$Element$Input$hasFocusStyle = function (attr) {
 		return false;
 	}
 };
-var mdgriffith$elm_ui$Internal$Model$NoAttribute = {$: 'NoAttribute'};
 var mdgriffith$elm_ui$Element$Input$focusDefault = function (attrs) {
 	return A2(elm$core$List$any, mdgriffith$elm_ui$Element$Input$hasFocusStyle, attrs) ? mdgriffith$elm_ui$Internal$Model$NoAttribute : mdgriffith$elm_ui$Internal$Model$htmlClass('focusable');
 };
@@ -15417,9 +15642,6 @@ var mdgriffith$elm_ui$Element$Input$onEnter = function (msg) {
 	return A2(mdgriffith$elm_ui$Element$Input$onKey, mdgriffith$elm_ui$Element$Input$enter, msg);
 };
 var mdgriffith$elm_ui$Internal$Model$Button = {$: 'Button'};
-var mdgriffith$elm_ui$Internal$Model$Describe = function (a) {
-	return {$: 'Describe', a: a};
-};
 var mdgriffith$elm_ui$Element$Input$button = F2(
 	function (attrs, _n0) {
 		var onPress = _n0.onPress;
@@ -15538,10 +15760,6 @@ var mdgriffith$elm_ui$Element$alpha = function (o) {
 			transparency));
 };
 var mdgriffith$elm_ui$Internal$Model$InFront = {$: 'InFront'};
-var mdgriffith$elm_ui$Internal$Model$Nearby = F2(
-	function (a, b) {
-		return {$: 'Nearby', a: a, b: b};
-	});
 var mdgriffith$elm_ui$Element$inFront = function (element) {
 	return A2(mdgriffith$elm_ui$Internal$Model$Nearby, mdgriffith$elm_ui$Internal$Model$InFront, element);
 };
@@ -15666,17 +15884,6 @@ var mdgriffith$elm_ui$Element$rgb = F3(
 		return A4(mdgriffith$elm_ui$Internal$Model$Rgba, r, g, b, 1);
 	});
 var mdgriffith$elm_ui$Element$Input$charcoal = A3(mdgriffith$elm_ui$Element$rgb, 136 / 255, 138 / 255, 133 / 255);
-var mdgriffith$elm_ui$Internal$Flag$borderRound = mdgriffith$elm_ui$Internal$Flag$flag(17);
-var mdgriffith$elm_ui$Element$Border$rounded = function (radius) {
-	return A2(
-		mdgriffith$elm_ui$Internal$Model$StyleClass,
-		mdgriffith$elm_ui$Internal$Flag$borderRound,
-		A3(
-			mdgriffith$elm_ui$Internal$Model$Single,
-			'br-' + elm$core$String$fromInt(radius),
-			'border-radius',
-			elm$core$String$fromInt(radius) + 'px'));
-};
 var mdgriffith$elm_ui$Internal$Model$BorderWidth = F5(
 	function (a, b, c, d, e) {
 		return {$: 'BorderWidth', a: a, b: b, c: c, d: d, e: e};
@@ -16260,11 +16467,31 @@ var author$project$Main$editView = F2(
 					mdgriffith$elm_ui$Element$el,
 					_List_Nil,
 					mdgriffith$elm_ui$Element$text(
-						'Editing' + elm$core$Debug$toString(model.currentToDoID))),
+						'Editing current item id#: ' + elm$core$Debug$toString(model.currentToDoID))),
 					A2(
 					mdgriffith$elm_ui$Element$Input$text,
 					_List_fromArray(
-						[mdgriffith$elm_ui$Element$Input$focusedOnLoad]),
+						[
+							mdgriffith$elm_ui$Element$Border$rounded(8),
+							mdgriffith$elm_ui$Element$Background$color(
+							author$project$Colors$tertiary(1)),
+							mdgriffith$elm_ui$Element$focused(
+							_List_fromArray(
+								[
+									mdgriffith$elm_ui$Element$Background$color(
+									A3(mdgriffith$elm_ui$Element$rgb255, 245, 242, 238)),
+									mdgriffith$elm_ui$Element$Border$shadow(
+									{
+										blur: 8,
+										color: author$project$Colors$primary(0.5),
+										offset: _Utils_Tuple2(0, 0),
+										size: 1
+									})
+								])),
+							mdgriffith$elm_ui$Element$Input$focusedOnLoad,
+							mdgriffith$elm_ui$Element$htmlAttribute(
+							elm$html$Html$Attributes$id('task name input'))
+						]),
 					{
 						label: A2(
 							mdgriffith$elm_ui$Element$Input$labelAbove,
@@ -16281,7 +16508,25 @@ var author$project$Main$editView = F2(
 					}),
 					A2(
 					mdgriffith$elm_ui$Element$Input$text,
-					_List_Nil,
+					_List_fromArray(
+						[
+							mdgriffith$elm_ui$Element$Border$rounded(8),
+							mdgriffith$elm_ui$Element$Background$color(
+							author$project$Colors$tertiary(1)),
+							mdgriffith$elm_ui$Element$focused(
+							_List_fromArray(
+								[
+									mdgriffith$elm_ui$Element$Background$color(
+									A3(mdgriffith$elm_ui$Element$rgb255, 245, 242, 238)),
+									mdgriffith$elm_ui$Element$Border$shadow(
+									{
+										blur: 8,
+										color: author$project$Colors$primary(0.5),
+										offset: _Utils_Tuple2(0, 0),
+										size: 1
+									})
+								]))
+						]),
 					{
 						label: A2(
 							mdgriffith$elm_ui$Element$Input$labelAbove,
@@ -16300,17 +16545,25 @@ var author$project$Main$editView = F2(
 					mdgriffith$elm_ui$Element$Input$button,
 					_List_fromArray(
 						[
+							mdgriffith$elm_ui$Element$Border$rounded(8),
 							mdgriffith$elm_ui$Element$Background$color(
 							author$project$Colors$primary(1.0)),
 							mdgriffith$elm_ui$Element$Font$color(
-							author$project$Colors$secondary(0.8)),
+							elm$core$String$isEmpty(model.cacheName) ? author$project$Colors$secondary(0.3) : A3(mdgriffith$elm_ui$Element$rgb255, 245, 242, 238)),
 							mdgriffith$elm_ui$Element$Font$bold,
-							mdgriffith$elm_ui$Element$Font$size(14),
-							mdgriffith$elm_ui$Element$padding(10)
+							mdgriffith$elm_ui$Element$Font$size(24),
+							mdgriffith$elm_ui$Element$Font$variant(mdgriffith$elm_ui$Element$Font$smallCaps),
+							mdgriffith$elm_ui$Element$padding(10),
+							mdgriffith$elm_ui$Element$focused(
+							_List_fromArray(
+								[
+									mdgriffith$elm_ui$Element$Background$color(
+									author$project$Colors$primary(0.8))
+								]))
 						]),
 					{
-						label: mdgriffith$elm_ui$Element$text('Submit Changes'),
-						onPress: elm$core$Maybe$Just(author$project$Main$UpdateThingToDo)
+						label: mdgriffith$elm_ui$Element$text('Submit'),
+						onPress: elm$core$String$isEmpty(model.cacheName) ? elm$core$Maybe$Nothing : elm$core$Maybe$Just(author$project$Main$UpdateThingToDo)
 					})
 				]));
 	});
@@ -16382,10 +16635,6 @@ var mdgriffith$elm_ui$Internal$Flag$moveY = mdgriffith$elm_ui$Internal$Flag$flag
 var mdgriffith$elm_ui$Internal$Model$MoveY = function (a) {
 	return {$: 'MoveY', a: a};
 };
-var mdgriffith$elm_ui$Internal$Model$TransformComponent = F2(
-	function (a, b) {
-		return {$: 'TransformComponent', a: a, b: b};
-	});
 var mdgriffith$elm_ui$Element$moveDown = function (y) {
 	return A2(
 		mdgriffith$elm_ui$Internal$Model$TransformComponent,
@@ -16414,7 +16663,6 @@ var mdgriffith$elm_ui$Element$moveUp = function (y) {
 		mdgriffith$elm_ui$Internal$Flag$moveY,
 		mdgriffith$elm_ui$Internal$Model$MoveY(-y));
 };
-var mdgriffith$elm_ui$Internal$Model$Empty = {$: 'Empty'};
 var mdgriffith$elm_ui$Element$none = mdgriffith$elm_ui$Internal$Model$Empty;
 var mdgriffith$elm_ui$Element$row = F2(
 	function (attrs, children) {
@@ -16523,7 +16771,7 @@ var author$project$Main$launchMainMenu = function (model) {
 											(!elm$core$Dict$isEmpty(model.tasks)) ? mdgriffith$elm_ui$Element$alpha(1) : mdgriffith$elm_ui$Element$alpha(0.3)
 										]),
 									{description: 'icon to clear all items', src: 'src/Icons/clearallicon.svg'}),
-								onPress: (!elm$core$Dict$isEmpty(model.tasks)) ? elm$core$Maybe$Just(author$project$Main$ClearAll) : elm$core$Maybe$Just(author$project$Main$CloseModal)
+								onPress: (!elm$core$Dict$isEmpty(model.tasks)) ? elm$core$Maybe$Just(author$project$Main$ClearAll) : elm$core$Maybe$Nothing
 							}),
 							A2(
 							mdgriffith$elm_ui$Element$Input$button,
@@ -17004,10 +17252,11 @@ var author$project$Main$launchMainMenu = function (model) {
 									mdgriffith$elm_ui$Element$image,
 									_List_fromArray(
 										[
-											mdgriffith$elm_ui$Element$scale(1)
+											mdgriffith$elm_ui$Element$scale(1),
+											mdgriffith$elm_ui$Element$alpha(0.4)
 										]),
 									{description: 'icon to add item', src: 'src/Icons/addicon.svg'}),
-								onPress: elm$core$Maybe$Just(author$project$Main$AddNewToDo)
+								onPress: elm$core$Maybe$Nothing
 							}),
 							A2(
 							mdgriffith$elm_ui$Element$Input$button,
@@ -17027,10 +17276,10 @@ var author$project$Main$launchMainMenu = function (model) {
 									_List_fromArray(
 										[
 											mdgriffith$elm_ui$Element$scale(1),
-											(!elm$core$Dict$isEmpty(model.tasks)) ? mdgriffith$elm_ui$Element$alpha(1) : mdgriffith$elm_ui$Element$alpha(0.3)
+											elm$core$Dict$isEmpty(model.tasks) ? mdgriffith$elm_ui$Element$alpha(0.3) : mdgriffith$elm_ui$Element$alpha(1)
 										]),
-									{description: 'icon to clear all items', src: 'src/Icons/clearallicon.svg'}),
-								onPress: (!elm$core$Dict$isEmpty(model.tasks)) ? elm$core$Maybe$Just(author$project$Main$ClearAll) : elm$core$Maybe$Just(author$project$Main$CloseModal)
+									{description: 'icon to list all items', src: 'src/Icons/viewallicon.svg'}),
+								onPress: elm$core$Dict$isEmpty(model.tasks) ? elm$core$Maybe$Nothing : elm$core$Maybe$Just(author$project$Main$ListAll)
 							}),
 							A2(
 							mdgriffith$elm_ui$Element$Input$button,
@@ -17140,180 +17389,11 @@ var author$project$Main$launchMainMenu = function (model) {
 		return mdgriffith$elm_ui$Element$none;
 	}
 };
+var author$project$Main$Active = {$: 'Active'};
+var author$project$Main$Completed = {$: 'Completed'};
+var author$project$Main$Deleted = {$: 'Deleted'};
 var author$project$Main$LaunchItemMenu = function (a) {
 	return {$: 'LaunchItemMenu', a: a};
-};
-var mdgriffith$elm_ui$Internal$Flag$hover = mdgriffith$elm_ui$Internal$Flag$flag(33);
-var mdgriffith$elm_ui$Internal$Model$Hover = {$: 'Hover'};
-var mdgriffith$elm_ui$Internal$Model$PseudoSelector = F2(
-	function (a, b) {
-		return {$: 'PseudoSelector', a: a, b: b};
-	});
-var elm$virtual_dom$VirtualDom$mapAttribute = _VirtualDom_mapAttribute;
-var mdgriffith$elm_ui$Internal$Model$AlignY = function (a) {
-	return {$: 'AlignY', a: a};
-};
-var mdgriffith$elm_ui$Internal$Model$map = F2(
-	function (fn, el) {
-		switch (el.$) {
-			case 'Styled':
-				var styled = el.a;
-				return mdgriffith$elm_ui$Internal$Model$Styled(
-					{
-						html: F2(
-							function (add, context) {
-								return A2(
-									elm$virtual_dom$VirtualDom$map,
-									fn,
-									A2(styled.html, add, context));
-							}),
-						styles: styled.styles
-					});
-			case 'Unstyled':
-				var html = el.a;
-				return mdgriffith$elm_ui$Internal$Model$Unstyled(
-					A2(
-						elm$core$Basics$composeL,
-						elm$virtual_dom$VirtualDom$map(fn),
-						html));
-			case 'Text':
-				var str = el.a;
-				return mdgriffith$elm_ui$Internal$Model$Text(str);
-			default:
-				return mdgriffith$elm_ui$Internal$Model$Empty;
-		}
-	});
-var mdgriffith$elm_ui$Internal$Model$mapAttrFromStyle = F2(
-	function (fn, attr) {
-		switch (attr.$) {
-			case 'NoAttribute':
-				return mdgriffith$elm_ui$Internal$Model$NoAttribute;
-			case 'Describe':
-				var description = attr.a;
-				return mdgriffith$elm_ui$Internal$Model$Describe(description);
-			case 'AlignX':
-				var x = attr.a;
-				return mdgriffith$elm_ui$Internal$Model$AlignX(x);
-			case 'AlignY':
-				var y = attr.a;
-				return mdgriffith$elm_ui$Internal$Model$AlignY(y);
-			case 'Width':
-				var x = attr.a;
-				return mdgriffith$elm_ui$Internal$Model$Width(x);
-			case 'Height':
-				var x = attr.a;
-				return mdgriffith$elm_ui$Internal$Model$Height(x);
-			case 'Class':
-				var x = attr.a;
-				var y = attr.b;
-				return A2(mdgriffith$elm_ui$Internal$Model$Class, x, y);
-			case 'StyleClass':
-				var flag = attr.a;
-				var style = attr.b;
-				return A2(mdgriffith$elm_ui$Internal$Model$StyleClass, flag, style);
-			case 'Nearby':
-				var location = attr.a;
-				var elem = attr.b;
-				return A2(
-					mdgriffith$elm_ui$Internal$Model$Nearby,
-					location,
-					A2(mdgriffith$elm_ui$Internal$Model$map, fn, elem));
-			case 'Attr':
-				var htmlAttr = attr.a;
-				return mdgriffith$elm_ui$Internal$Model$Attr(
-					A2(elm$virtual_dom$VirtualDom$mapAttribute, fn, htmlAttr));
-			default:
-				var fl = attr.a;
-				var trans = attr.b;
-				return A2(mdgriffith$elm_ui$Internal$Model$TransformComponent, fl, trans);
-		}
-	});
-var mdgriffith$elm_ui$Internal$Model$removeNever = function (style) {
-	return A2(mdgriffith$elm_ui$Internal$Model$mapAttrFromStyle, elm$core$Basics$never, style);
-};
-var mdgriffith$elm_ui$Internal$Model$unwrapDecsHelper = F2(
-	function (attr, _n0) {
-		var styles = _n0.a;
-		var trans = _n0.b;
-		var _n1 = mdgriffith$elm_ui$Internal$Model$removeNever(attr);
-		switch (_n1.$) {
-			case 'StyleClass':
-				var style = _n1.b;
-				return _Utils_Tuple2(
-					A2(elm$core$List$cons, style, styles),
-					trans);
-			case 'TransformComponent':
-				var flag = _n1.a;
-				var component = _n1.b;
-				return _Utils_Tuple2(
-					styles,
-					A2(mdgriffith$elm_ui$Internal$Model$composeTransformation, trans, component));
-			default:
-				return _Utils_Tuple2(styles, trans);
-		}
-	});
-var mdgriffith$elm_ui$Internal$Model$unwrapDecorations = function (attrs) {
-	var _n0 = A3(
-		elm$core$List$foldl,
-		mdgriffith$elm_ui$Internal$Model$unwrapDecsHelper,
-		_Utils_Tuple2(_List_Nil, mdgriffith$elm_ui$Internal$Model$Untransformed),
-		attrs);
-	var styles = _n0.a;
-	var transform = _n0.b;
-	return A2(
-		elm$core$List$cons,
-		mdgriffith$elm_ui$Internal$Model$Transform(transform),
-		styles);
-};
-var mdgriffith$elm_ui$Element$mouseOver = function (decs) {
-	return A2(
-		mdgriffith$elm_ui$Internal$Model$StyleClass,
-		mdgriffith$elm_ui$Internal$Flag$hover,
-		A2(
-			mdgriffith$elm_ui$Internal$Model$PseudoSelector,
-			mdgriffith$elm_ui$Internal$Model$Hover,
-			mdgriffith$elm_ui$Internal$Model$unwrapDecorations(decs)));
-};
-var author$project$Main$listActiveTasksView = function (model) {
-	return A2(
-		mdgriffith$elm_ui$Element$column,
-		_List_Nil,
-		A2(
-			elm$core$List$map,
-			function (_n0) {
-				var id = _n0.a;
-				var task = _n0.b;
-				return A2(
-					mdgriffith$elm_ui$Element$Input$button,
-					_List_fromArray(
-						[
-							mdgriffith$elm_ui$Element$width(
-							mdgriffith$elm_ui$Element$px(120)),
-							mdgriffith$elm_ui$Element$height(
-							mdgriffith$elm_ui$Element$px(36)),
-							mdgriffith$elm_ui$Element$Font$size(14),
-							mdgriffith$elm_ui$Element$padding(10),
-							mdgriffith$elm_ui$Element$mouseOver(
-							_List_fromArray(
-								[
-									mdgriffith$elm_ui$Element$Background$color(
-									author$project$Colors$primary(0.6))
-								]))
-						]),
-					{
-						label: mdgriffith$elm_ui$Element$text(task.name),
-						onPress: elm$core$Maybe$Just(
-							author$project$Main$LaunchItemMenu(id))
-					});
-			},
-			elm$core$Dict$toList(
-				A2(
-					elm$core$Dict$filter,
-					F2(
-						function (id, task) {
-							return !(task.completed || task.deleted);
-						}),
-					model.tasks))));
 };
 var author$project$Main$CompleteToDo = function (a) {
 	return {$: 'CompleteToDo', a: a};
@@ -17326,6 +17406,17 @@ var author$project$Main$EditToDo = function (a) {
 };
 var mdgriffith$elm_ui$Internal$Model$CenterY = {$: 'CenterY'};
 var mdgriffith$elm_ui$Element$centerY = mdgriffith$elm_ui$Internal$Model$AlignY(mdgriffith$elm_ui$Internal$Model$CenterY);
+var mdgriffith$elm_ui$Internal$Flag$hover = mdgriffith$elm_ui$Internal$Flag$flag(33);
+var mdgriffith$elm_ui$Internal$Model$Hover = {$: 'Hover'};
+var mdgriffith$elm_ui$Element$mouseOver = function (decs) {
+	return A2(
+		mdgriffith$elm_ui$Internal$Model$StyleClass,
+		mdgriffith$elm_ui$Internal$Flag$hover,
+		A2(
+			mdgriffith$elm_ui$Internal$Model$PseudoSelector,
+			mdgriffith$elm_ui$Internal$Model$Hover,
+			mdgriffith$elm_ui$Internal$Model$unwrapDecorations(decs)));
+};
 var mdgriffith$elm_ui$Internal$Flag$rotate = mdgriffith$elm_ui$Internal$Flag$flag(24);
 var mdgriffith$elm_ui$Internal$Model$Rotate = F2(
 	function (a, b) {
@@ -17350,14 +17441,14 @@ var author$project$Main$launchItemMenu = function (model) {
 					mdgriffith$elm_ui$Element$centerX,
 					mdgriffith$elm_ui$Element$centerY,
 					mdgriffith$elm_ui$Element$moveUp(14),
-					mdgriffith$elm_ui$Element$moveRight(26),
+					mdgriffith$elm_ui$Element$moveRight(30),
 					mdgriffith$elm_ui$Element$behindContent(
 					A2(
 						mdgriffith$elm_ui$Element$image,
 						_List_fromArray(
 							[
 								mdgriffith$elm_ui$Element$rotate(-1.571),
-								mdgriffith$elm_ui$Element$scale(3)
+								mdgriffith$elm_ui$Element$scale(2)
 							]),
 						{description: 'background for item menu', src: 'src/Icons/arcmenu.svg'})),
 					mdgriffith$elm_ui$Element$padding(10),
@@ -17375,16 +17466,16 @@ var author$project$Main$launchItemMenu = function (model) {
 					_List_fromArray(
 						[
 							mdgriffith$elm_ui$Element$width(
-							mdgriffith$elm_ui$Element$px(48)),
+							mdgriffith$elm_ui$Element$px(36)),
 							mdgriffith$elm_ui$Element$height(
-							mdgriffith$elm_ui$Element$px(48)),
-							mdgriffith$elm_ui$Element$Border$rounded(48),
+							mdgriffith$elm_ui$Element$px(36)),
+							mdgriffith$elm_ui$Element$Border$rounded(36),
 							mdgriffith$elm_ui$Element$Background$color(
 							author$project$Colors$primary(0.0)),
 							mdgriffith$elm_ui$Element$Font$size(14),
-							mdgriffith$elm_ui$Element$moveUp(100),
-							mdgriffith$elm_ui$Element$moveRight(16),
-							mdgriffith$elm_ui$Element$padding(10),
+							mdgriffith$elm_ui$Element$moveUp(90),
+							mdgriffith$elm_ui$Element$moveRight(32),
+							mdgriffith$elm_ui$Element$padding(2),
 							mdgriffith$elm_ui$Element$mouseOver(
 							_List_fromArray(
 								[
@@ -17397,7 +17488,7 @@ var author$project$Main$launchItemMenu = function (model) {
 							mdgriffith$elm_ui$Element$image,
 							_List_fromArray(
 								[
-									mdgriffith$elm_ui$Element$scale(3)
+									mdgriffith$elm_ui$Element$scale(2)
 								]),
 							{description: 'icon to edit item', src: 'src/Icons/editicon.svg'}),
 						onPress: elm$core$Maybe$Just(
@@ -17409,16 +17500,16 @@ var author$project$Main$launchItemMenu = function (model) {
 					_List_fromArray(
 						[
 							mdgriffith$elm_ui$Element$width(
-							mdgriffith$elm_ui$Element$px(48)),
+							mdgriffith$elm_ui$Element$px(36)),
 							mdgriffith$elm_ui$Element$height(
-							mdgriffith$elm_ui$Element$px(48)),
-							mdgriffith$elm_ui$Element$Border$rounded(48),
+							mdgriffith$elm_ui$Element$px(36)),
+							mdgriffith$elm_ui$Element$Border$rounded(36),
 							mdgriffith$elm_ui$Element$Background$color(
 							author$project$Colors$primary(0.0)),
 							mdgriffith$elm_ui$Element$Font$size(14),
 							mdgriffith$elm_ui$Element$padding(10),
 							mdgriffith$elm_ui$Element$moveUp(64),
-							mdgriffith$elm_ui$Element$moveLeft(10),
+							mdgriffith$elm_ui$Element$moveLeft(1),
 							mdgriffith$elm_ui$Element$mouseOver(
 							_List_fromArray(
 								[
@@ -17431,7 +17522,7 @@ var author$project$Main$launchItemMenu = function (model) {
 							mdgriffith$elm_ui$Element$image,
 							_List_fromArray(
 								[
-									mdgriffith$elm_ui$Element$scale(3)
+									mdgriffith$elm_ui$Element$scale(2)
 								]),
 							{description: 'icon to mark item complete', src: 'src/Icons/checkmark.svg'}),
 						onPress: elm$core$Maybe$Just(
@@ -17443,16 +17534,16 @@ var author$project$Main$launchItemMenu = function (model) {
 					_List_fromArray(
 						[
 							mdgriffith$elm_ui$Element$width(
-							mdgriffith$elm_ui$Element$px(48)),
+							mdgriffith$elm_ui$Element$px(36)),
 							mdgriffith$elm_ui$Element$height(
-							mdgriffith$elm_ui$Element$px(48)),
-							mdgriffith$elm_ui$Element$Border$rounded(48),
+							mdgriffith$elm_ui$Element$px(36)),
+							mdgriffith$elm_ui$Element$Border$rounded(36),
 							mdgriffith$elm_ui$Element$Background$color(
 							author$project$Colors$primary(0.0)),
 							mdgriffith$elm_ui$Element$Font$size(14),
 							mdgriffith$elm_ui$Element$padding(10),
-							mdgriffith$elm_ui$Element$moveUp(28),
-							mdgriffith$elm_ui$Element$moveRight(18),
+							mdgriffith$elm_ui$Element$moveUp(18),
+							mdgriffith$elm_ui$Element$moveRight(32),
 							mdgriffith$elm_ui$Element$mouseOver(
 							_List_fromArray(
 								[
@@ -17465,7 +17556,7 @@ var author$project$Main$launchItemMenu = function (model) {
 							mdgriffith$elm_ui$Element$image,
 							_List_fromArray(
 								[
-									mdgriffith$elm_ui$Element$scale(3)
+									mdgriffith$elm_ui$Element$scale(2)
 								]),
 							{description: 'icon to delete item', src: 'src/Icons/trashicon.svg'}),
 						onPress: elm$core$Maybe$Just(
@@ -17477,99 +17568,6 @@ var author$project$Main$launchItemMenu = function (model) {
 		return mdgriffith$elm_ui$Element$none;
 	}
 };
-var mdgriffith$elm_ui$Internal$Model$OnLeft = {$: 'OnLeft'};
-var mdgriffith$elm_ui$Element$onLeft = function (element) {
-	return A2(mdgriffith$elm_ui$Internal$Model$Nearby, mdgriffith$elm_ui$Internal$Model$OnLeft, element);
-};
-var author$project$Main$listCompletedTasksView = function (model) {
-	return A2(
-		mdgriffith$elm_ui$Element$column,
-		_List_Nil,
-		A2(
-			elm$core$List$map,
-			function (_n0) {
-				var id = _n0.a;
-				var task = _n0.b;
-				return A2(
-					mdgriffith$elm_ui$Element$Input$button,
-					_List_fromArray(
-						[
-							mdgriffith$elm_ui$Element$onLeft(
-							author$project$Main$launchItemMenu(model)),
-							mdgriffith$elm_ui$Element$width(
-							mdgriffith$elm_ui$Element$px(120)),
-							mdgriffith$elm_ui$Element$height(
-							mdgriffith$elm_ui$Element$px(36)),
-							mdgriffith$elm_ui$Element$Font$size(14),
-							mdgriffith$elm_ui$Element$padding(10),
-							mdgriffith$elm_ui$Element$mouseOver(
-							_List_fromArray(
-								[
-									mdgriffith$elm_ui$Element$Background$color(
-									author$project$Colors$primary(0.6))
-								]))
-						]),
-					{
-						label: mdgriffith$elm_ui$Element$text(task.name),
-						onPress: elm$core$Maybe$Just(
-							author$project$Main$LaunchItemMenu(id))
-					});
-			},
-			A2(
-				elm$core$List$filter,
-				function (_n1) {
-					var id = _n1.a;
-					var task = _n1.b;
-					return task.completed;
-				},
-				elm$core$Dict$toList(model.tasks))));
-};
-var author$project$Main$listDeletedTasksView = function (model) {
-	return A2(
-		mdgriffith$elm_ui$Element$column,
-		_List_Nil,
-		A2(
-			elm$core$List$map,
-			function (_n0) {
-				var id = _n0.a;
-				var task = _n0.b;
-				return A2(
-					mdgriffith$elm_ui$Element$Input$button,
-					_List_fromArray(
-						[
-							mdgriffith$elm_ui$Element$onLeft(
-							author$project$Main$launchItemMenu(model)),
-							mdgriffith$elm_ui$Element$width(
-							mdgriffith$elm_ui$Element$px(120)),
-							mdgriffith$elm_ui$Element$height(
-							mdgriffith$elm_ui$Element$px(36)),
-							mdgriffith$elm_ui$Element$Font$size(14),
-							mdgriffith$elm_ui$Element$padding(10),
-							mdgriffith$elm_ui$Element$mouseOver(
-							_List_fromArray(
-								[
-									mdgriffith$elm_ui$Element$Background$color(
-									author$project$Colors$primary(0.6))
-								]))
-						]),
-					{
-						label: mdgriffith$elm_ui$Element$text(task.name),
-						onPress: elm$core$Maybe$Just(
-							author$project$Main$LaunchItemMenu(id))
-					});
-			},
-			A2(
-				elm$core$List$filter,
-				function (_n1) {
-					var id = _n1.a;
-					var task = _n1.b;
-					return task.deleted;
-				},
-				elm$core$Dict$toList(model.tasks))));
-};
-var author$project$Main$Active = {$: 'Active'};
-var author$project$Main$Completed = {$: 'Completed'};
-var author$project$Main$Deleted = {$: 'Deleted'};
 var mdgriffith$elm_ui$Element$Font$strike = mdgriffith$elm_ui$Internal$Model$htmlClass(mdgriffith$elm_ui$Internal$Style$classes.strike);
 var author$project$Main$listItemStyle = function (item) {
 	switch (item.$) {
@@ -17587,7 +17585,7 @@ var author$project$Main$listItemStyle = function (item) {
 			return _List_fromArray(
 				[
 					mdgriffith$elm_ui$Element$Font$color(
-					author$project$Colors$primary(0.5))
+					author$project$Colors$primary(0.7))
 				]);
 	}
 };
@@ -17595,40 +17593,115 @@ var elm$core$String$cons = _String_cons;
 var elm$core$String$fromChar = function (_char) {
 	return A2(elm$core$String$cons, _char, '');
 };
-var author$project$Main$listTasksView = function (model) {
+var mdgriffith$elm_ui$Internal$Model$OnLeft = {$: 'OnLeft'};
+var mdgriffith$elm_ui$Element$onLeft = function (element) {
+	return A2(mdgriffith$elm_ui$Internal$Model$Nearby, mdgriffith$elm_ui$Internal$Model$OnLeft, element);
+};
+var author$project$Main$listTasks = function (model) {
+	var _n0 = function () {
+		var _n1 = model.currentView;
+		switch (_n1.$) {
+			case 'ViewAll':
+				return _Utils_Tuple3(
+					'All Tasks',
+					elm$core$Dict$toList(model.tasks),
+					_Utils_Tuple2(
+						author$project$Main$listItemStyle(author$project$Main$Active),
+						_Utils_Tuple2(
+							author$project$Main$listItemStyle(author$project$Main$Deleted),
+							author$project$Main$listItemStyle(author$project$Main$Completed))));
+			case 'ViewDeleted':
+				return _Utils_Tuple3(
+					'Deleted Tasks',
+					A2(
+						elm$core$List$filter,
+						function (_n2) {
+							var id = _n2.a;
+							var task = _n2.b;
+							return task.deleted;
+						},
+						elm$core$Dict$toList(model.tasks)),
+					_Utils_Tuple2(
+						_List_Nil,
+						_Utils_Tuple2(_List_Nil, _List_Nil)));
+			case 'ViewComplete':
+				return _Utils_Tuple3(
+					'Completed Tasks',
+					A2(
+						elm$core$List$filter,
+						function (_n3) {
+							var id = _n3.a;
+							var task = _n3.b;
+							return task.completed;
+						},
+						elm$core$Dict$toList(model.tasks)),
+					_Utils_Tuple2(
+						_List_Nil,
+						_Utils_Tuple2(_List_Nil, _List_Nil)));
+			default:
+				return _Utils_Tuple3(
+					'',
+					elm$core$Dict$toList(model.tasks),
+					_Utils_Tuple2(
+						_List_Nil,
+						_Utils_Tuple2(_List_Nil, _List_Nil)));
+		}
+	}();
+	var title = _n0.a;
+	var tasklist = _n0.b;
+	var styleList = _n0.c;
 	return A2(
 		mdgriffith$elm_ui$Element$column,
-		_List_Nil,
+		_List_fromArray(
+			[
+				mdgriffith$elm_ui$Element$width(mdgriffith$elm_ui$Element$fill)
+			]),
 		A2(
-			elm$core$List$map,
-			function (_n0) {
-				var id = _n0.a;
-				var task = _n0.b;
-				return A2(
-					mdgriffith$elm_ui$Element$Input$button,
-					_Utils_eq(
-						elm$core$Maybe$Just(id),
-						model.currentToDoID) ? A2(
-						elm$core$List$append,
-						_List_fromArray(
-							[
-								mdgriffith$elm_ui$Element$onLeft(
-								author$project$Main$launchItemMenu(model))
-							]),
-						author$project$Main$listItemStyle(author$project$Main$Active)) : (task.deleted ? author$project$Main$listItemStyle(author$project$Main$Deleted) : (task.completed ? author$project$Main$listItemStyle(author$project$Main$Completed) : _List_Nil)),
-					function () {
-						var leader = elm$core$String$fromChar(
-							task.completed ? _Utils_chr('✓') : (task.deleted ? _Utils_chr('✘') : _Utils_chr('☉')));
-						return {
-							label: mdgriffith$elm_ui$Element$text(leader + (' ' + task.name)),
-							onPress: (!_Utils_eq(
-								elm$core$Maybe$Just(id),
-								model.currentToDoID)) ? elm$core$Maybe$Just(
-								author$project$Main$LaunchItemMenu(id)) : elm$core$Maybe$Nothing
-						};
-					}());
-			},
-			elm$core$Dict$toList(model.tasks)));
+			elm$core$List$append,
+			_List_fromArray(
+				[
+					A2(
+					mdgriffith$elm_ui$Element$row,
+					_List_fromArray(
+						[
+							mdgriffith$elm_ui$Element$centerX,
+							A2(mdgriffith$elm_ui$Element$paddingXY, 12, 8)
+						]),
+					_List_fromArray(
+						[
+							mdgriffith$elm_ui$Element$text(title)
+						]))
+				]),
+			A2(
+				elm$core$List$map,
+				function (_n4) {
+					var id = _n4.a;
+					var task = _n4.b;
+					return A2(
+						mdgriffith$elm_ui$Element$Input$button,
+						_Utils_eq(
+							elm$core$Maybe$Just(id),
+							model.currentToDoID) ? A2(
+							elm$core$List$append,
+							_List_fromArray(
+								[
+									mdgriffith$elm_ui$Element$onLeft(
+									author$project$Main$launchItemMenu(model))
+								]),
+							styleList.a) : (task.deleted ? styleList.b.a : (task.completed ? styleList.b.b : _List_Nil)),
+						function () {
+							var leader = (!_Utils_eq(model.currentView, author$project$Main$ViewAll)) ? ' ' : elm$core$String$fromChar(
+								task.completed ? _Utils_chr('✓') : (task.deleted ? _Utils_chr('✘') : _Utils_chr('☉')));
+							return {
+								label: mdgriffith$elm_ui$Element$text(leader + (' ' + task.name)),
+								onPress: (!_Utils_eq(
+									elm$core$Maybe$Just(id),
+									model.currentToDoID)) ? elm$core$Maybe$Just(
+									author$project$Main$LaunchItemMenu(id)) : elm$core$Maybe$Nothing
+							};
+						}());
+				},
+				tasklist)));
 };
 var mdgriffith$elm_ui$Internal$Model$Above = {$: 'Above'};
 var mdgriffith$elm_ui$Element$above = function (element) {
@@ -17638,31 +17711,6 @@ var mdgriffith$elm_ui$Internal$Model$Bottom = {$: 'Bottom'};
 var mdgriffith$elm_ui$Element$alignBottom = mdgriffith$elm_ui$Internal$Model$AlignY(mdgriffith$elm_ui$Internal$Model$Bottom);
 var mdgriffith$elm_ui$Internal$Model$Top = {$: 'Top'};
 var mdgriffith$elm_ui$Element$alignTop = mdgriffith$elm_ui$Internal$Model$AlignY(mdgriffith$elm_ui$Internal$Model$Top);
-var mdgriffith$elm_ui$Element$htmlAttribute = mdgriffith$elm_ui$Internal$Model$Attr;
-var mdgriffith$elm_ui$Internal$Flag$shadows = mdgriffith$elm_ui$Internal$Flag$flag(19);
-var mdgriffith$elm_ui$Internal$Model$boxShadowName = function (shadow) {
-	return elm$core$String$concat(
-		_List_fromArray(
-			[
-				shadow.inset ? 'box-inset' : 'box-',
-				elm$core$String$fromFloat(shadow.offset.a) + 'px',
-				elm$core$String$fromFloat(shadow.offset.b) + 'px',
-				elm$core$String$fromFloat(shadow.blur) + 'px',
-				elm$core$String$fromFloat(shadow.size) + 'px',
-				mdgriffith$elm_ui$Internal$Model$formatColorClass(shadow.color)
-			]));
-};
-var mdgriffith$elm_ui$Element$Border$shadow = function (almostShade) {
-	var shade = {blur: almostShade.blur, color: almostShade.color, inset: false, offset: almostShade.offset, size: almostShade.size};
-	return A2(
-		mdgriffith$elm_ui$Internal$Model$StyleClass,
-		mdgriffith$elm_ui$Internal$Flag$shadows,
-		A3(
-			mdgriffith$elm_ui$Internal$Model$Single,
-			mdgriffith$elm_ui$Internal$Model$boxShadowName(shade),
-			'box-shadow',
-			mdgriffith$elm_ui$Internal$Model$formatBoxShadow(shade)));
-};
 var author$project$Main$baseView = function (model) {
 	return A2(
 		mdgriffith$elm_ui$Element$column,
@@ -17726,35 +17774,48 @@ var author$project$Main$baseView = function (model) {
 						var _n0 = model.currentView;
 						switch (_n0.$) {
 							case 'ViewAll':
-								return author$project$Main$listTasksView(model);
+								return author$project$Main$listTasks(model);
 							case 'Editing':
 								return A2(
 									author$project$Main$editView,
 									model,
 									author$project$Main$getCurrentToDo(model));
 							case 'ViewDeleted':
-								return author$project$Main$listDeletedTasksView(model);
+								return author$project$Main$listTasks(model);
 							case 'ViewComplete':
-								return author$project$Main$listCompletedTasksView(model);
+								return author$project$Main$listTasks(model);
 							case 'ViewActive':
-								return author$project$Main$listActiveTasksView(model);
+								return author$project$Main$listTasks(model);
 							default:
 								return mdgriffith$elm_ui$Element$none;
 						}
 					}()
 					])),
 				A2(
-				mdgriffith$elm_ui$Element$row,
-				_List_fromArray(
-					[mdgriffith$elm_ui$Element$centerX]),
+				mdgriffith$elm_ui$Element$column,
 				_List_fromArray(
 					[
+						mdgriffith$elm_ui$Element$centerX,
+						mdgriffith$elm_ui$Element$width(mdgriffith$elm_ui$Element$fill)
+					]),
+				_List_fromArray(
+					[
+						A2(
+						mdgriffith$elm_ui$Element$el,
+						_List_fromArray(
+							[
+								mdgriffith$elm_ui$Element$scale(3),
+								mdgriffith$elm_ui$Element$centerX,
+								mdgriffith$elm_ui$Element$moveUp(28),
+								mdgriffith$elm_ui$Element$moveLeft(30),
+								mdgriffith$elm_ui$Element$above(
+								author$project$Main$launchMainMenu(model))
+							]),
+						mdgriffith$elm_ui$Element$none),
 						A2(
 						mdgriffith$elm_ui$Element$Input$button,
 						_List_fromArray(
 							[
-								mdgriffith$elm_ui$Element$above(
-								author$project$Main$launchMainMenu(model)),
 								mdgriffith$elm_ui$Element$Border$rounded(16),
 								mdgriffith$elm_ui$Element$width(
 								mdgriffith$elm_ui$Element$px(16)),
@@ -17777,6 +17838,10 @@ var author$project$Main$baseView = function (model) {
 					]))
 			]));
 };
+var mdgriffith$elm_ui$Internal$Model$FocusStyleOption = function (a) {
+	return {$: 'FocusStyleOption', a: a};
+};
+var mdgriffith$elm_ui$Element$focusStyle = mdgriffith$elm_ui$Internal$Model$FocusStyleOption;
 var mdgriffith$elm_ui$Internal$Model$OnlyDynamic = F2(
 	function (a, b) {
 		return {$: 'OnlyDynamic', a: a, b: b};
@@ -18027,11 +18092,28 @@ var mdgriffith$elm_ui$Element$layoutWith = F3(
 				_Utils_ap(mdgriffith$elm_ui$Internal$Model$rootStyle, attrs)),
 			child);
 	});
-var mdgriffith$elm_ui$Element$layout = mdgriffith$elm_ui$Element$layoutWith(
-	{options: _List_Nil});
 var author$project$Main$view = function (model) {
-	return A2(
-		mdgriffith$elm_ui$Element$layout,
+	return A3(
+		mdgriffith$elm_ui$Element$layoutWith,
+		{
+			options: _List_fromArray(
+				[
+					mdgriffith$elm_ui$Element$focusStyle(
+					{
+						backgroundColor: elm$core$Maybe$Just(
+							author$project$Colors$secondary(1)),
+						borderColor: elm$core$Maybe$Just(
+							author$project$Colors$primary(0.5)),
+						shadow: elm$core$Maybe$Just(
+							{
+								blur: 2,
+								color: author$project$Colors$primary(0.5),
+								offset: _Utils_Tuple2(0, 0),
+								size: 1
+							})
+					})
+				])
+		},
 		_List_fromArray(
 			[
 				mdgriffith$elm_ui$Element$padding(30),
